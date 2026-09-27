@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dis-moi Tout</title>
+<meta name="description" content="Un concept d'informatique tombe au hasard : tu as un temps limité pour dire tout ce que tu sais dessus.">
+<meta name="theme-color" content="#EDF0F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1016" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dis-moi Tout">
+<style>
+:root{
+  --bg:#EDF0F5; --surface:#FFFFFF; --sunk:#E3E7EF; --ink:#11151F; --muted:#586177; --line:#D3D9E4;
+  --accent:#3346F0; --accent-ink:#FFFFFF; --accent-soft:#DDE1FF;
+  --good:#17895A; --mid:#B87400; --bad:#CF3440;
+  --display:"Avenir Next", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --body:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0D1016; --surface:#161A23; --sunk:#1D2230; --ink:#E8EBF2; --muted:#8F98AC; --line:#2A3040;
+    --accent:#8C99FF; --accent-ink:#0B0E14; --accent-soft:#252B4D;
+    --good:#3DD68C; --mid:#F2B43A; --bad:#FF6B73;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0D1016; --surface:#161A23; --sunk:#1D2230; --ink:#E8EBF2; --muted:#8F98AC; --line:#2A3040;
+  --accent:#8C99FF; --accent-ink:#0B0E14; --accent-soft:#252B4D;
+  --good:#3DD68C; --mid:#F2B43A; --bad:#FF6B73;
+}
+*{box-sizing:border-box}
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-tap-highlight-color:transparent}
+.app{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:22px}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* En-tête */
+.brand{display:flex;flex-direction:column;gap:6px}
+.brand h1{font:800 clamp(2.4rem,11vw,3.4rem)/.95 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:0;color:var(--muted);max-width:40ch}
+.label{font:700 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0}
+.block{display:flex;flex-direction:column;gap:10px}
+.row-between{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:600 .85rem var(--body)}
+
+/* Thèmes */
+.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.theme{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 12px 11px;border-radius:var(--r);border:1.5px solid var(--line);background:var(--surface);min-height:64px;transition:border-color .15s,background .15s}
+.theme b{font:600 .95rem/1.2 var(--body)}
+.theme small{font:500 .72rem var(--mono);color:var(--muted)}
+.theme[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.theme[aria-pressed="true"] small{color:var(--accent)}
+
+/* Segments durée */
+.seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--sunk);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:10px 0;font:700 .9rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* Joueurs */
+.players-form{display:flex;gap:8px}
+.players-form input{flex:1;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface)}
+.btn-sm{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:0 16px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border-radius:99px;background:var(--sunk);font-weight:500;font-size:.9rem}
+.chip button{border:0;background:var(--surface);width:24px;height:24px;border-radius:50%;line-height:1;color:var(--muted)}
+.hint{margin:0;color:var(--muted);font-size:.85rem}
+
+.toggle{display:flex;align-items:center;gap:10px;font-weight:500}
+.toggle input{width:20px;height:20px;accent-color:var(--accent)}
+.toggle.disabled{opacity:.45}
+
+/* Bouton principal */
+.cta{border:0;border-radius:16px;background:var(--accent);color:var(--accent-ink);padding:18px;font:700 1.15rem var(--display);letter-spacing:-.01em;display:flex;justify-content:center;align-items:center;gap:10px}
+.cta:active{transform:translateY(1px)}
+.cta:disabled{opacity:.4;cursor:not-allowed}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stat strong{font:700 1.4rem/1 var(--mono);font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--muted)}
+.stat.good strong{color:var(--good)} .stat.mid strong{color:var(--mid)} .stat.bad strong{color:var(--bad)}
+
+details{background:var(--surface);border-radius:var(--r);padding:0 14px}
+summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:700 1.1rem var(--mono);color:var(--muted)}
+details[open] summary::after{content:"–"}
+details .inner{padding-bottom:14px;display:flex;flex-direction:column;gap:10px}
+textarea{width:100%;min-height:130px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font:500 .85rem/1.5 var(--mono);resize:vertical}
+.review-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto}
+.review-list li{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.review-list li span{color:var(--muted);font:500 .72rem var(--mono);white-space:nowrap}
+
+/* Écran de jeu */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.back{border:0;background:var(--surface);border-radius:99px;padding:8px 14px;font-weight:600;font-size:.9rem}
+.turn{font:700 .8rem var(--mono);background:var(--accent-soft);color:var(--accent);padding:7px 12px;border-radius:99px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.card{background:var(--surface);border-radius:22px;padding:22px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;box-shadow:0 1px 0 var(--line),0 12px 32px -18px rgba(17,21,31,.35)}
+.card .label{color:var(--accent)}
+.concept{font:800 clamp(1.9rem,9vw,2.8rem)/1.02 var(--display);letter-spacing:-.025em;margin:0;text-wrap:balance;overflow-wrap:anywhere;min-height:2.1em;display:flex;align-items:center}
+.concept.pop{animation:pop .35s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+
+.ring{position:relative;width:min(58vw,220px);aspect-ratio:1;max-width:100%}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .track{fill:none;stroke:var(--sunk);stroke-width:9}
+.ring .prog{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;transition:stroke .3s}
+.ring.warn .prog{stroke:var(--mid)}
+.ring.danger .prog{stroke:var(--bad)}
+.ring .time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.ring .time b{font:700 clamp(2.2rem,12vw,3.2rem)/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.ring .time small{font:500 .75rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.ring.danger .time b{color:var(--bad)}
+.ring.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.03)}}
+
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.controls .cta{grid-column:1 / -1}
+.ghost{border:1.5px solid var(--line);background:transparent;border-radius:14px;padding:14px;font-weight:600}
+
+.reveal{display:flex;flex-direction:column;gap:14px;width:100%;text-align:left}
+.reveal h2{font:700 1.15rem var(--display);margin:0}
+.keys{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.keys li{background:var(--sunk);border-radius:8px;padding:6px 10px;font-size:.92rem}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rate button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:600;font-size:.88rem}
+.rate button i{font-style:normal;width:12px;height:12px;border-radius:50%}
+.rate .r-good i{background:var(--good)} .rate .r-mid i{background:var(--mid)} .rate .r-bad i{background:var(--bad)}
+.rate button:hover{border-color:var(--ink)}
+
+.board{display:flex;flex-direction:column;gap:6px}
+.board ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.board li{display:flex;justify-content:space-between;background:var(--surface);border-radius:10px;padding:9px 12px;font-weight:500}
+.board li.now{outline:2px solid var(--accent)}
+.board li b{font:700 1rem var(--mono);font-variant-numeric:tabular-nums}
+
+.foot{color:var(--muted);font-size:.8rem;text-align:center;margin:0}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<main class="app">
+  <!-- Accueil -->
+  <section id="home" class="app" style="padding:0">
+    <header class="brand">
+      <p class="label">Révision orale · informatique</p>
+      <h1>Dis-moi <span>tout.</span></h1>
+      <p>Un concept tombe au hasard. Tu as <strong id="durLabel">60 secondes</strong> pour dire à voix haute tout ce que tu sais dessus.</p>
+    </header>
+
+    <div class="block">
+      <div class="row-between">
+        <p class="label">Thèmes</p>
+        <button class="linkbtn" id="allThemes" type="button">Tout sélectionner</button>
+      </div>
+      <div class="themes" id="themes"></div>
+    </div>
+
+    <div class="block">
+      <p class="label">Temps de parole</p>
+      <div class="seg" id="durations" role="group" aria-label="Durée du chrono"></div>
+    </div>
+
+    <div class="block">
+      <p class="label">Joueurs <span style="text-transform:none;letter-spacing:0">(optionnel)</span></p>
+      <form class="players-form" id="playerForm">
+        <input id="playerName" type="text" maxlength="20" placeholder="Prénom d'un pote" autocomplete="off">
+        <button class="btn-sm" type="submit">Ajouter</button>
+      </form>
+      <div class="chips" id="players"></div>
+      <p class="hint" id="playersHint">Seul, tu révises. À plusieurs, vous vous passez le téléphone et les autres notent la réponse.</p>
+    </div>
+
+    <label class="toggle" id="reviewToggleWrap"><input type="checkbox" id="reviewOnly"> <span id="reviewToggleText">Seulement mes concepts « à revoir »</span></label>
+
+    <button class="cta" id="drawBtn" type="button">Tirer un concept →</button>
+
+    <div class="block">
+      <p class="label">Ta progression</p>
+      <div class="stats">
+        <div class="stat good"><strong id="sGood">0</strong><span>maîtrisés</span></div>
+        <div class="stat mid"><strong id="sMid">0</strong><span>moyens</span></div>
+        <div class="stat bad"><strong id="sBad">0</strong><span>à revoir</span></div>
+      </div>
+    </div>
+
+    <details id="reviewDetails">
+      <summary>Mes concepts à revoir</summary>
+      <div class="inner">
+        <ul class="review-list" id="reviewList"></ul>
+        <button class="linkbtn" id="resetProgress" type="button" style="align-self:flex-start">Effacer ma progression</button>
+        <p class="hint" id="resetConfirm" hidden>Appuie encore une fois pour confirmer.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Mes concepts perso</summary>
+      <div class="inner">
+        <p class="hint">Un concept par ligne. Ajoute les points clés après une barre verticale. Ils apparaissent dans le thème « Mes concepts ».</p>
+        <textarea id="customText" spellcheck="false" placeholder="Loi de Moore | transistors, doublement, ~2 ans&#10;Kafka | log distribué, topics, partitions"></textarea>
+        <button class="btn-sm" id="saveCustom" type="button" style="align-self:flex-start;padding:10px 16px">Enregistrer</button>
+        <p class="hint" id="customSaved" hidden>Enregistré.</p>
+      </div>
+    </details>
+
+    <p class="foot">Ta progression reste sur ce téléphone. Une fois installée, l'appli marche aussi sans Internet.</p>
+  </section>
+
+  <!-- Jeu -->
+  <section id="play" class="app" style="padding:0" hidden>
+    <div class="topbar">
+      <button class="back" id="backBtn" type="button">← Thèmes</button>
+      <span class="turn" id="turn" hidden></span>
+    </div>
+
+    <div class="card">
+      <p class="label" id="cTheme">Thème</p>
+      <h2 class="concept" id="cWord">Concept</h2>
+
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="52"></circle>
+          <circle class="prog" id="prog" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="time"><b id="tNum">1:00</b><small id="tState">prêt ?</small></div>
+      </div>
+
+      <div class="controls" id="controls"></div>
+
+      <div class="reveal" id="reveal" hidden>
+        <h2>Points à citer</h2>
+        <ul class="keys" id="keys"></ul>
+        <p class="label" id="rateLabel">Comment ça s'est passé ?</p>
+        <div class="rate">
+          <button class="r-bad" data-rate="bad" type="button"><i></i>À revoir</button>
+          <button class="r-mid" data-rate="mid" type="button"><i></i>Moyen</button>
+          <button class="r-good" data-rate="good" type="button"><i></i>Maîtrisé</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="board" id="board" hidden>
+      <p class="label">Scores · maîtrisé 2 pts, moyen 1 pt</p>
+      <ol id="boardList"></ol>
+    </div>
+  </section>
+</main>
+
+<script>
+const RAW = {
+fullstack:["Dev Full Stack",`API REST|ressources, verbes HTTP, stateless, codes de statut
+GraphQL|schéma typé, une seule route, queries et mutations, évite l'over-fetching
+CORS|same-origin policy, en-têtes Access-Control-*, requête preflight OPTIONS
+JWT|header.payload.signature, stateless, expiration, pas de secrets dans le payload
+Cookies vs localStorage|HttpOnly, risque XSS, CSRF, envoi automatique au serveur
+Virtual DOM|diff, réconciliation, React, mises à jour minimales du DOM
+SSR vs CSR|rendu serveur vs navigateur, SEO, hydratation, premier affichage
+Hydratation|HTML rendu côté serveur, le JS attache les événements, erreurs de mismatch
+Bundler (Webpack, Vite)|modules ES, HMR, tree shaking, minification
+Event loop JavaScript|call stack, file de tâches, microtâches, non bloquant
+Promises et async/await|asynchrone, then/catch, try/catch, Promise.all
+Closures|portée lexicale, fonction qui capture ses variables, encapsulation
+Hoisting|var vs let/const, déclarations remontées, temporal dead zone
+Middleware (Express)|chaîne req/res, next(), auth, logs, gestion d'erreurs
+ORM|mapping objet-relationnel, Prisma, Hibernate, problème N+1, migrations
+WebSockets|connexion bidirectionnelle, temps réel, upgrade depuis HTTP
+Responsive design|media queries, mobile first, flexbox et grid, viewport
+Flexbox vs Grid|une dimension vs deux dimensions, alignement, placement
+Accessibilité web|WCAG, ARIA, contraste, navigation au clavier
+Gestion d'état (state management)|Redux, Context, store, flux unidirectionnel
+TypeScript|typage statique, interfaces, inférence, compilé en JavaScript
+Hooks React|useState, useEffect, règles des hooks, tableau de dépendances
+Pagination d'API|offset/limit, curseur, performance, total
+Rate limiting|quota de requêtes, code 429, token bucket, protection contre les abus
+Cache HTTP|Cache-Control, ETag, réponse 304, CDN
+Monorepo|plusieurs projets dans un dépôt, code partagé, Nx, Turborepo
+Tests unitaires vs E2E|pyramide des tests, Jest, Playwright, mocks
+PWA|service worker, manifest, hors ligne, installable`],
+ia:["IA & Machine Learning",`Réseau de neurones|couches, poids et biais, fonction d'activation, rétropropagation
+Rétropropagation|gradient, règle de la chaîne, mise à jour des poids
+Descente de gradient|learning rate, minimum local, SGD, mini-batch
+Overfitting|apprend par cœur le train, généralise mal, régularisation, jeu de validation
+Régularisation|L1 et L2, dropout, pénalité, limite la complexité
+Fonction d'activation|ReLU, sigmoïde, tanh, apporte la non-linéarité
+CNN|convolutions, filtres, pooling, vision par ordinateur
+RNN et LSTM|séquences, mémoire, gradient qui disparaît, portes
+Transformer|attention, parallélisable, encodeur/décodeur, 2017
+Mécanisme d'attention|query, key, value, pondération, self-attention
+LLM|modèle de langage, prédiction du prochain token, pré-entraînement, milliards de paramètres
+Tokenisation|découpage en tokens, BPE, vocabulaire, coût et fenêtre de contexte
+Embeddings|vecteurs denses, similarité cosinus, espace sémantique
+Fine-tuning|réentraînement sur données ciblées, LoRA, transfert
+RAG|recherche puis génération, base vectorielle, contexte injecté, moins d'hallucinations
+Hallucination|réponse fausse mais plausible, ancrage sur des sources, vérification
+Prompt engineering|instructions claires, few-shot, chaîne de pensée, contexte
+Apprentissage supervisé|données étiquetées, classification, régression
+Apprentissage non supervisé|sans étiquettes, clustering, réduction de dimension
+Apprentissage par renforcement|agent, environnement, récompense, politique
+GAN|générateur contre discriminateur, jeu adversarial, images synthétiques
+Modèles de diffusion|ajout puis retrait de bruit, génération d'images, Stable Diffusion
+Transfer learning|modèle pré-entraîné, réutilisation, peu de données
+Fonction de perte|erreur à minimiser, MSE, cross-entropy
+Softmax|scores vers probabilités, somme à 1, multi-classe
+Batch normalization|normalise les activations, stabilise, accélère l'entraînement
+Agents IA|outils, planification, boucle action/observation, autonomie
+Biais algorithmique|données biaisées, équité, discrimination, audit
+Température d'un LLM|aléa de l'échantillonnage, créativité vs déterminisme`],
+data:["Data Science",`Régression linéaire|relation linéaire, moindres carrés, coefficients, R²
+Régression logistique|classification binaire, sigmoïde, probabilité, log-loss
+Arbre de décision|découpages, entropie ou Gini, interprétable, surapprentissage
+Random Forest|bagging, plusieurs arbres, vote, importance des variables
+Gradient boosting|arbres successifs, corrige les erreurs, XGBoost, LightGBM
+K-means|clustering, centroïdes, choix de k, méthode du coude
+ACP (PCA)|réduction de dimension, variance expliquée, composantes orthogonales
+Validation croisée|k-fold, estimation robuste, évite un split chanceux
+Compromis biais-variance|sous-apprentissage vs sur-apprentissage, complexité du modèle
+Matrice de confusion|vrais positifs, faux positifs, vrais négatifs, faux négatifs
+Précision vs rappel|faux positifs vs faux négatifs, F1-score, seuil
+Courbe ROC et AUC|TPR vs FPR, seuils, 0,5 = hasard
+Feature engineering|créer des variables, encodage, transformation, connaissance métier
+Normalisation vs standardisation|min-max, z-score, mise à l'échelle, algos sensibles aux distances
+Valeurs manquantes|suppression, imputation, moyenne ou médiane, MCAR/MAR
+Données déséquilibrées|classe minoritaire, SMOTE, pondération, métriques adaptées
+One-hot encoding|variables catégorielles, colonnes binaires, piège des dummies
+p-value|hypothèse nulle, significativité, seuil 0,05, souvent mal interprétée
+Test A/B|groupe contrôle, variante, significativité, taille d'échantillon
+Corrélation vs causalité|lien statistique, variable confondante, expérience contrôlée
+Loi normale|courbe en cloche, moyenne, écart-type, règle 68-95-99,7
+Théorème central limite|moyenne d'échantillons, tend vers une loi normale, n grand
+DataFrame Pandas|tableau indexé, groupby, merge, Series
+Analyse exploratoire (EDA)|visualisation, statistiques descriptives, anomalies, hypothèses
+Valeurs aberrantes (outliers)|IQR, z-score, impact sur la moyenne, erreur ou vrai signal
+Data leakage|info du test dans l'entraînement, scores trop beaux, pipeline
+Séries temporelles|tendance, saisonnalité, stationnarité, ARIMA
+Médiane vs moyenne|robustesse aux outliers, distribution asymétrique`],
+secu:["Cybersécurité",`Faille XSS|injection de script, échappement des sorties, CSP, cookies HttpOnly
+Injection SQL|requêtes paramétrées, entrée utilisateur, ORM, moindre privilège
+CSRF|requête forgée depuis un autre site, token anti-CSRF, SameSite
+Chiffrement symétrique|une seule clé, AES, rapide, problème du partage de clé
+Chiffrement asymétrique|clé publique et privée, RSA, échange de clés, signature
+Fonction de hachage|sens unique, SHA-256, intégrité, collisions
+Salage des mots de passe|sel aléatoire, bcrypt ou argon2, contre les rainbow tables
+HTTPS et TLS|certificat, handshake, chiffrement en transit, autorité de certification
+Authentification vs autorisation|qui tu es vs ce que tu as le droit de faire, RBAC
+MFA|plusieurs facteurs, savoir/avoir/être, TOTP, clés physiques
+OAuth 2.0|délégation d'accès, access token, authorization code, scopes
+Phishing|ingénierie sociale, faux site, urgence, vérifier l'expéditeur
+Attaque DDoS|saturation, botnet, mitigation, CDN
+Man-in-the-middle|interception, ARP spoofing, TLS, vérification de certificat
+Principe du moindre privilège|droits minimaux, réduit la surface d'attaque
+Pare-feu|filtrage de paquets, règles, stateful, WAF
+Zero Trust|ne jamais faire confiance, toujours vérifier, micro-segmentation
+Ransomware|chiffrement des données, rançon, sauvegardes hors ligne, isolation
+Buffer overflow|dépassement de tampon, écrasement de la pile, ASLR, canaris
+OWASP Top 10|risques web majeurs, contrôle d'accès, injection, mauvaise config
+Test d'intrusion (pentest)|autorisé, reconnaissance, exploitation, rapport
+Faille zero-day|inconnue de l'éditeur, pas de correctif, exploit
+Signature numérique|clé privée signe, clé publique vérifie, intégrité, non-répudiation
+VPN|tunnel chiffré, confidentialité, accès distant
+SIEM|centralisation des logs, corrélation, alertes, SOC
+Attaque par force brute|essais exhaustifs, verrouillage, rate limit, mots de passe longs`],
+devops:["DevOps & Cloud",`CI/CD|intégration continue, déploiement continu, pipeline, tests automatisés
+Docker|conteneur, image, Dockerfile, isolation
+Conteneur vs machine virtuelle|noyau partagé vs hyperviseur, légèreté, démarrage rapide
+Kubernetes|orchestration, pods, services, scaling automatique
+Pod Kubernetes|plus petite unité, un ou plusieurs conteneurs, IP partagée
+Infrastructure as Code|Terraform, versionnée, reproductible, déclaratif
+Microservices|services indépendants, API, déploiement séparé, complexité réseau
+Load balancer|répartition du trafic, haute dispo, round robin, health checks
+Scalabilité horizontale vs verticale|plus de machines vs machine plus puissante
+Serverless|fonctions à la demande, pas de serveur à gérer, cold start, paiement à l'usage
+IaaS, PaaS, SaaS|niveaux d'abstraction, qui gère quoi, exemples concrets
+Stratégies de branches Git|merge vs rebase, GitFlow, trunk-based
+Blue-green deployment|deux environnements, bascule du trafic, rollback rapide
+Canary release|déploiement progressif, petit pourcentage d'utilisateurs, monitoring
+Observabilité|logs, métriques, traces, Prometheus et Grafana
+Reverse proxy|Nginx, intermédiaire, terminaison TLS, cache, routage
+CDN|serveurs proches des utilisateurs, cache des fichiers statiques, latence
+Variables d'environnement|config hors du code, secrets, méthode 12-factor
+Docker Compose|plusieurs conteneurs, fichier YAML, réseau local, dev
+Ansible|gestion de configuration, sans agent, playbooks, idempotence
+SLA, SLO, SLI|engagement contractuel, objectif, indicateur mesuré
+Haute disponibilité|redondance, pas de point unique de défaillance, failover, 99,9 %
+Registre d'images|Docker Hub, stockage d'images, tags et versions
+Helm|gestionnaire de paquets Kubernetes, charts, templates`],
+bdd:["Bases de données",`SQL vs NoSQL|relationnel vs document ou clé-valeur, schéma, scalabilité
+Normalisation|formes normales, éviter la redondance, 1NF, 2NF, 3NF
+Clé primaire et clé étrangère|identifiant unique, relations, intégrité référentielle
+Jointures SQL|INNER, LEFT, RIGHT, FULL
+Index|accélère la lecture, B-tree, ralentit l'écriture
+Transactions ACID|atomicité, cohérence, isolation, durabilité
+Théorème CAP|cohérence, disponibilité, tolérance au partitionnement, on en garde deux
+Niveaux d'isolation|read committed, repeatable read, serializable, lectures fantômes
+Interblocage (deadlock) en BDD|verrous croisés, détection, ordre d'acquisition des verrous
+Réplication|primaire et réplicas, répartition des lectures, haute dispo
+Sharding|partitionnement horizontal, clé de sharding, répartition des données
+GROUP BY et HAVING|agrégation, filtre après regroupement, COUNT, SUM
+Sous-requête|requête imbriquée, IN, EXISTS, corrélée
+Vue SQL|requête enregistrée, table virtuelle, simplification, sécurité
+Procédure stockée|code dans la base, réutilisable, paramètres
+MongoDB|documents BSON, collections, schéma flexible
+Redis|clé-valeur en mémoire, cache, TTL, pub/sub
+Problème N+1|une requête par élément, eager loading, jointure
+Modèle entité-association|entités, attributs, cardinalités, MCD
+Dénormalisation|redondance volontaire, lectures rapides, entrepôt de données
+Base de données vectorielle|embeddings, recherche par similarité, RAG
+Data warehouse|OLAP, schéma en étoile, historique, analytique
+OLTP vs OLAP|transactions vs analyse, stockage en lignes vs colonnes
+Migration de schéma|versionner la structure, up/down, Flyway, Liquibase`],
+algo:["Algo & Structures",`Complexité Big O|temps et espace, pire cas, O(n), O(log n)
+Recherche dichotomique|tableau trié, divise par deux, O(log n)
+Tri rapide (quicksort)|pivot, partition, O(n log n) en moyenne, O(n²) au pire
+Tri fusion (merge sort)|diviser pour régner, fusion, stable, O(n log n)
+Récursivité|cas de base, appel à soi-même, pile d'appels, stack overflow
+Programmation dynamique|sous-problèmes qui se répètent, mémoïsation, tabulation
+Algorithme glouton|choix localement optimal, pas toujours optimal globalement, rendu de monnaie
+Pile (stack)|LIFO, push et pop, pile d'appels, annuler
+File (queue)|FIFO, enqueue et dequeue, BFS, file d'attente
+Liste chaînée|nœuds et pointeurs, insertion O(1), accès O(n)
+Table de hachage|fonction de hachage, collisions, accès O(1) en moyenne
+Arbre binaire de recherche|gauche < nœud < droite, O(log n) si équilibré
+Tas (heap)|arbre presque complet, min ou max à la racine, file de priorité
+Graphe|sommets et arêtes, orienté ou non, liste ou matrice d'adjacence
+Parcours en largeur (BFS)|file, niveau par niveau, plus court chemin non pondéré
+Parcours en profondeur (DFS)|pile ou récursion, détection de cycles, tri topologique
+Algorithme de Dijkstra|plus court chemin, poids positifs, file de priorité
+Diviser pour régner|découper, résoudre, combiner
+Backtracking|exploration, retour arrière, N-reines, sudoku
+Mémoïsation|cache des résultats, évite les recalculs, approche top-down
+Arbre équilibré (AVL, rouge-noir)|rotations, hauteur O(log n)
+Trie (arbre préfixe)|préfixes, autocomplétion, dictionnaire
+Technique des deux pointeurs|deux indices, tableau trié, O(n)
+Fenêtre glissante|sous-tableau contigu, on avance les bornes, O(n)
+Problème NP-complet|vérifiable en temps polynomial, pas d'algo rapide connu, P vs NP`],
+reseau:["Réseaux",`Modèle OSI|7 couches, de physique à application, encapsulation
+TCP vs UDP|fiable et orienté connexion vs rapide et sans connexion
+Handshake TCP|SYN, SYN-ACK, ACK, établissement de connexion
+Adresse IP|IPv4 vs IPv6, identifie une machine, publique ou privée
+Masque de sous-réseau|notation CIDR, /24, partie réseau vs partie hôte
+DNS|nom de domaine vers IP, résolution, enregistrements A et CNAME, cache
+DHCP|attribution automatique d'IP, bail, séquence DORA
+NAT|traduction d'adresses, IP privées derrière une IP publique
+HTTP vs HTTPS|texte clair vs chiffré par TLS, ports 80 et 443
+Méthodes HTTP|GET, POST, PUT, PATCH, DELETE
+Codes de statut HTTP|2xx succès, 3xx redirection, 4xx erreur client, 5xx erreur serveur
+Routeur vs switch|couche 3 vs couche 2, adresses IP vs MAC
+Adresse MAC|identifiant matériel, couche 2, ARP
+Protocole ARP|IP vers MAC, broadcast, ARP spoofing
+Port réseau|identifie un service, 0 à 65535, 22, 80, 443
+Latence vs bande passante|délai vs débit
+VLAN|réseau local virtuel, segmentation, configuré sur le switch
+HTTP/2 et HTTP/3|multiplexage, QUIC, UDP, performances
+Ping et traceroute|ICMP, test de connectivité, sauts entre routeurs
+Proxy|intermédiaire, filtrage, anonymat, cache
+Wi-Fi|norme 802.11, bandes 2,4 et 5 GHz, WPA2 et WPA3
+BGP|routage entre systèmes autonomes, colonne vertébrale d'Internet`],
+os:["Systèmes & OS",`Processus vs thread|mémoire séparée vs partagée, coût de création
+Ordonnancement (scheduling)|round robin, priorités, préemption, temps CPU
+Mémoire virtuelle|espace d'adressage, pagination, swap
+Pagination mémoire|pages, table des pages, défaut de page
+Interblocage (deadlock)|4 conditions de Coffman, prévention, détection
+Mutex et sémaphore|exclusion mutuelle, section critique, compteur
+Race condition|accès concurrent, résultat imprévisible, synchronisation
+Appel système|passage en mode noyau, read, write, fork
+Noyau (kernel)|cœur de l'OS, monolithique vs micro-noyau, pilotes
+Système de fichiers|inodes, ext4 et NTFS, arborescence, journalisation
+Appel fork()|clone le processus, parent et enfant, PID
+Pile vs tas|stack automatique et LIFO vs heap dynamique, fuites
+Garbage collector|libération automatique, mark and sweep, pauses
+Interruptions|signal matériel ou logiciel, gestionnaire, priorité
+Changement de contexte|sauvegarde des registres, coût, multitâche
+Permissions Linux|rwx, user/group/others, chmod
+Shell et pipes|interpréteur, redirections, pipe |, stdin et stdout
+Cache CPU|L1, L2, L3, localité, cache miss
+Concurrence vs parallélisme|entrelacement vs exécution simultanée, multicœur
+Fuite mémoire|mémoire jamais libérée, consommation qui grimpe, outils de détection
+Démon (service)|processus en arrière-plan, systemd`],
+archi:["Archi & Génie logiciel",`Principes SOLID|responsabilité unique, ouvert/fermé, Liskov, ségrégation des interfaces, inversion des dépendances
+MVC|modèle, vue, contrôleur, séparation des responsabilités
+Pattern Singleton|instance unique, accès global, difficile à tester
+Pattern Observer|abonnés, notification, événements
+Pattern Factory|création d'objets déléguée, découplage
+Injection de dépendances|dépendances fournies de l'extérieur, testabilité, IoC
+Architecture hexagonale|ports et adaptateurs, domaine au centre, indépendance technique
+Clean Architecture|couches concentriques, règle de dépendance vers l'intérieur, entités
+Monolithe vs microservices|simplicité vs indépendance, déploiement, équipes
+DRY, KISS, YAGNI|pas de répétition, rester simple, ne pas coder par anticipation
+Couplage et cohésion|faible couplage, forte cohésion
+Architecture orientée événements|producteurs et consommateurs, asynchrone, découplage
+Message broker|Kafka, RabbitMQ, files de messages, découplage
+CQRS|séparer lecture et écriture, modèles distincts
+Domain-Driven Design|domaine métier, langage ubiquitaire, bounded context, agrégats
+API Gateway|point d'entrée unique, routage, authentification, rate limiting
+Programmation orientée objet|encapsulation, héritage, polymorphisme, abstraction
+Programmation fonctionnelle|fonctions pures, immuabilité, fonctions d'ordre supérieur
+Dette technique|raccourcis, coût futur, remboursement par refactoring
+Refactoring|améliorer la structure sans changer le comportement, filet de tests
+TDD|test d'abord, red-green-refactor
+Agile et Scrum|sprints, backlog, rétrospective, itératif
+Versionnage sémantique|MAJEUR.MINEUR.CORRECTIF, compatibilité
+Idempotence|même résultat si on répète, PUT, retry sans risque
+Circuit breaker|coupe les appels vers un service en panne, résilience`]
+};
+
+const DURS=[30,45,60,90,120];
+const store={
+  get(k,d){try{const v=localStorage.getItem("dmt:"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("dmt:"+k,JSON.stringify(v))}catch(e){}}
+};
+const parse=txt=>txt.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{
+  const i=l.indexOf("|");
+  return i<0?{w:l,k:[]}:{w:l.slice(0,i).trim(),k:l.slice(i+1).split(",").map(s=>s.trim()).filter(Boolean)};
+}).filter(c=>c.w);
+
+let THEMES={};
+function buildThemes(){
+  THEMES={};
+  for(const [id,[name,txt]] of Object.entries(RAW)) THEMES[id]={name,items:parse(txt)};
+  const custom=parse(store.get("custom",""));
+  if(custom.length) THEMES.perso={name:"Mes concepts",items:custom};
+}
+buildThemes();
+
+const S={
+  selected:new Set(store.get("themes",["fullstack"])),
+  dur:store.get("dur",60),
+  players:store.get("players",[]),
+  scores:{},
+  turn:0,
+  progress:store.get("progress",{}),
+  deck:[], current:null,
+  left:0, running:false, done:false, tick:null, endAt:0,
+};
+S.players.forEach(p=>S.scores[p]=0);
+
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function fmtTime(s){const t=Math.ceil(s);return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}
+const key=(t,w)=>t+"::"+w;
+
+/* ---------- Accueil ---------- */
+function renderThemes(){
+  for(const id of [...S.selected]) if(!THEMES[id]) S.selected.delete(id);
+  $("themes").innerHTML=Object.entries(THEMES).map(([id,t])=>
+    `<button class="theme" type="button" data-id="${id}" aria-pressed="${S.selected.has(id)}"><b>${esc(t.name)}</b><small>${t.items.length} concepts</small></button>`).join("");
+  const all=Object.keys(THEMES).every(id=>S.selected.has(id));
+  $("allThemes").textContent=all?"Tout désélectionner":"Tout sélectionner";
+  updateDraw();
+}
+$("themes").addEventListener("click",e=>{
+  const b=e.target.closest(".theme"); if(!b) return;
+  const id=b.dataset.id;
+  S.selected.has(id)?S.selected.delete(id):S.selected.add(id);
+  store.set("themes",[...S.selected]); S.deck=[]; renderThemes();
+});
+$("allThemes").addEventListener("click",()=>{
+  const all=Object.keys(THEMES).every(id=>S.selected.has(id));
+  S.selected=new Set(all?[]:Object.keys(THEMES));
+  store.set("themes",[...S.selected]); S.deck=[]; renderThemes();
+});
+
+function renderDurs(){
+  $("durations").innerHTML=DURS.map(d=>`<button type="button" data-d="${d}" aria-pressed="${d===S.dur}">${d<60?d+"s":fmtTime(d)}</button>`).join("");
+  const d=S.dur;
+  $("durLabel").textContent=d<60?d+" secondes":d%60===0?(d/60)+" minute"+(d>60?"s":""):Math.floor(d/60)+" min "+(d%60);
+}
+$("durations").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  S.dur=+b.dataset.d; store.set("dur",S.dur); renderDurs();
+});
+
+function renderPlayers(){
+  $("players").innerHTML=S.players.map((p,i)=>`<span class="chip">${esc(p)}<button type="button" data-i="${i}" aria-label="Retirer ${esc(p)}">×</button></span>`).join("");
+  $("playersHint").textContent=S.players.length
+    ? `${S.players.length} joueur${S.players.length>1?"s":""}. Chacun son tour, les autres jugent la réponse.`
+    : "Seul, tu révises. À plusieurs, vous vous passez le téléphone et les autres notent la réponse.";
+}
+$("playerForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const n=$("playerName").value.trim(); if(!n||S.players.includes(n)) return;
+  S.players.push(n); S.scores[n]=0; store.set("players",S.players);
+  $("playerName").value=""; renderPlayers();
+});
+$("players").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const [p]=S.players.splice(+b.dataset.i,1); delete S.scores[p];
+  store.set("players",S.players); renderPlayers();
+});
+
+function reviewPool(){
+  return Object.entries(S.progress).filter(([,r])=>r==="bad").map(([k])=>k);
+}
+function renderStats(){
+  const v=Object.values(S.progress);
+  $("sGood").textContent=v.filter(r=>r==="good").length;
+  $("sMid").textContent=v.filter(r=>r==="mid").length;
+  $("sBad").textContent=v.filter(r=>r==="bad").length;
+  const pool=reviewPool();
+  $("reviewList").innerHTML=pool.length
+    ? pool.map(k=>{const [t,w]=k.split("::");return `<li>${esc(w)}<span>${esc(THEMES[t]?.name||t)}</span></li>`}).join("")
+    : `<li style="border:0;color:var(--muted)">Rien à revoir pour l'instant. Note « À revoir » un concept pour le retrouver ici.</li>`;
+  const wrap=$("reviewToggleWrap");
+  $("reviewOnly").disabled=!pool.length;
+  if(!pool.length) $("reviewOnly").checked=false;
+  wrap.classList.toggle("disabled",!pool.length);
+  $("reviewToggleText").textContent=`Seulement mes concepts « à revoir »${pool.length?" ("+pool.length+")":""}`;
+  updateDraw();
+}
+function updateDraw(){
+  const ok=$("reviewOnly").checked?reviewPool().length>0:S.selected.size>0;
+  $("drawBtn").disabled=!ok;
+  $("drawBtn").textContent=ok?"Tirer un concept →":"Choisis au moins un thème";
+}
+$("reviewOnly").addEventListener("change",()=>{S.deck=[];updateDraw()});
+
+let resetArmed=false;
+$("resetProgress").addEventListener("click",()=>{
+  if(!resetArmed){resetArmed=true;$("resetConfirm").hidden=false;setTimeout(()=>{resetArmed=false;$("resetConfirm").hidden=true},4000);return}
+  S.progress={};store.set("progress",{});resetArmed=false;$("resetConfirm").hidden=true;renderStats();
+});
+
+$("customText").value=store.get("custom","");
+$("saveCustom").addEventListener("click",()=>{
+  store.set("custom",$("customText").value);
+  buildThemes();
+  if(THEMES.perso) S.selected.add("perso");
+  store.set("themes",[...S.selected]); S.deck=[];
+  renderThemes();
+  $("customSaved").hidden=false; setTimeout(()=>$("customSaved").hidden=true,2000);
+});
+
+/* ---------- Tirage ---------- */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function buildDeck(){
+  let cards=[];
+  if($("reviewOnly").checked){
+    for(const k of reviewPool()){
+      const [t,w]=k.split("::"); const it=THEMES[t]?.items.find(x=>x.w===w);
+      if(it) cards.push({t,...it});
+    }
+  } else {
+    for(const t of S.selected) for(const it of THEMES[t].items) cards.push({t,...it});
+  }
+  S.deck=shuffle(cards);
+}
+function draw(){
+  if(!S.deck.length) buildDeck();
+  if(!S.deck.length) return false;
+  S.current=S.deck.pop();
+  return true;
+}
+
+/* ---------- Jeu ---------- */
+const C=2*Math.PI*52;
+$("prog").style.strokeDasharray=C;
+
+function showCard(){
+  const c=S.current;
+  $("cTheme").textContent=THEMES[c.t].name;
+  const w=$("cWord"); w.textContent=c.w; w.classList.remove("pop"); void w.offsetWidth; w.classList.add("pop");
+  S.left=S.dur; S.running=false; S.done=false;
+  $("reveal").hidden=true;
+  $("ring").hidden=false;
+  paintTimer(); renderControls(); renderTurn();
+}
+function paintTimer(){
+  const f=Math.max(0,S.left/S.dur);
+  $("prog").style.strokeDashoffset=C*(1-f);
+  $("tNum").textContent=fmtTime(S.left);
+  const r=$("ring");
+  r.classList.toggle("warn",f<=.34&&f>.12);
+  r.classList.toggle("danger",f<=.12);
+  r.classList.toggle("pulse",S.running&&S.left<=5);
+  $("tState").textContent=S.done?"terminé":S.running?"parle !":S.left<S.dur?"en pause":"prêt ?";
+}
+function renderControls(){
+  const el=$("controls");
+  if(S.done){el.innerHTML="";el.hidden=true;return}
+  el.hidden=false;
+  if(S.running) el.innerHTML=`<button class="ghost" id="bPause" type="button">Pause</button><button class="ghost" id="bFinish" type="button">J'ai fini</button>`;
+  else if(S.left<S.dur) el.innerHTML=`<button class="cta" id="bStart" type="button">Reprendre</button><button class="ghost" id="bFinish" type="button">J'ai fini</button><button class="ghost" id="bSkip" type="button">Autre concept</button>`;
+  else el.innerHTML=`<button class="cta" id="bStart" type="button">Lancer le chrono</button><button class="ghost" id="bSkip" type="button" style="grid-column:1 / -1">Autre concept</button>`;
+}
+$("controls").addEventListener("click",e=>{
+  const id=e.target.id;
+  if(id==="bStart") start();
+  else if(id==="bPause") pause();
+  else if(id==="bFinish") finish(false);
+  else if(id==="bSkip"){ if(draw()) showCard(); }
+});
+
+let wake=null, actx=null;
+async function keepAwake(on){
+  try{
+    if(on&&!wake&&navigator.wakeLock) wake=await navigator.wakeLock.request("screen");
+    if(!on&&wake){await wake.release();wake=null}
+  }catch(e){wake=null}
+}
+function beep(){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.18,.36].forEach((t,i)=>{
+      const o=actx.createOscillator(),g=actx.createGain();
+      o.frequency.value=i===2?988:740; o.type="sine";
+      g.gain.setValueAtTime(.0001,actx.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(.25,actx.currentTime+t+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+t+.16);
+      o.connect(g).connect(actx.destination); o.start(actx.currentTime+t); o.stop(actx.currentTime+t+.18);
+    });
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([200,80,200])}catch(e){}
+}
+function start(){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
+  S.running=true; S.endAt=performance.now()+S.left*1000;
+  keepAwake(true);
+  clearInterval(S.tick);
+  S.tick=setInterval(()=>{
+    S.left=Math.max(0,(S.endAt-performance.now())/1000);
+    paintTimer();
+    if(S.left<=0) finish(true);
+  },100);
+  renderControls(); paintTimer();
+}
+function pause(){
+  clearInterval(S.tick); S.running=false; keepAwake(false);
+  renderControls(); paintTimer();
+}
+function finish(timeUp){
+  clearInterval(S.tick); S.running=false; S.done=true; keepAwake(false);
+  if(timeUp){S.left=0;beep()}
+  paintTimer(); renderControls();
+  const k=S.current.k;
+  $("keys").innerHTML=k.length?k.map(x=>`<li>${esc(x)}</li>`).join(""):`<li>Pas de points clés pour ce concept perso.</li>`;
+  $("rateLabel").textContent=S.players.length?`Les autres jugent ${S.players[S.turn]} :`:"Comment ça s'est passé ?";
+  $("reveal").hidden=false;
+  $("reveal").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+document.querySelector(".rate").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const r=b.dataset.rate;
+  S.progress[key(S.current.t,S.current.w)]=r; store.set("progress",S.progress);
+  if(S.players.length){
+    const p=S.players[S.turn];
+    S.scores[p]=(S.scores[p]||0)+(r==="good"?2:r==="mid"?1:0);
+    S.turn=(S.turn+1)%S.players.length;
+  }
+  if($("reviewOnly").checked&&r!=="bad") S.deck=S.deck.filter(c=>key(c.t,c.w)!==key(S.current.t,S.current.w));
+  if(draw()) {showCard(); window.scrollTo({top:0,behavior:"smooth"})}
+  else goHome();
+});
+
+function renderTurn(){
+  const t=$("turn"), b=$("board");
+  if(!S.players.length){t.hidden=true;b.hidden=true;return}
+  t.hidden=false; t.textContent="Au tour de "+S.players[S.turn];
+  b.hidden=false;
+  const order=[...S.players].sort((a,c)=>(S.scores[c]||0)-(S.scores[a]||0));
+  $("boardList").innerHTML=order.map(p=>`<li class="${p===S.players[S.turn]?"now":""}">${esc(p)}<b>${S.scores[p]||0}</b></li>`).join("");
+}
+
+function goPlay(){
+  if(!draw()) return;
+  if(S.turn>=S.players.length) S.turn=0;
+  $("home").hidden=true; $("play").hidden=false;
+  showCard(); window.scrollTo(0,0);
+}
+function goHome(){
+  clearInterval(S.tick); S.running=false; keepAwake(false);
+  $("play").hidden=true; $("home").hidden=false;
+  renderStats(); window.scrollTo(0,0);
+}
+$("drawBtn").addEventListener("click",goPlay);
+$("backBtn").addEventListener("click",goHome);
+
+document.addEventListener("keydown",e=>{
+  if($("play").hidden||e.target.matches("input,textarea")) return;
+  if(e.code==="Space"){e.preventDefault(); if(S.done) return; S.running?pause():start()}
+});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.running) keepAwake(true)});
+
+renderThemes(); renderDurs(); renderPlayers(); renderStats();
+
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+
+</body>
+</html>
