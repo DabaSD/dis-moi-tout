@@ -5,522 +5,467 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dis-moi Tout</title>
 <meta name="description" content="Un concept d'informatique tombe au hasard : tu as un temps limité pour dire tout ce que tu sais dessus.">
-<meta name="theme-color" content="#EDF0F5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1016" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0B0F18">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dis-moi Tout">
+<link rel="preload" href="fonts/space-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:"Space Grotesk";font-weight:500;font-display:swap;src:url(fonts/space-grotesk-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Space Grotesk";font-weight:700;font-display:swap;src:url(fonts/space-grotesk-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:500;font-display:swap;src:url(fonts/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Inter";font-weight:600;font-display:swap;src:url(fonts/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:700;font-display:swap;src:url(fonts/jetbrains-mono-latin-700-normal.woff2) format("woff2")}
+
+/* Sombre par défaut (design Stitch), clair en parité */
 :root{
-  --bg:#EDF0F5; --surface:#FFFFFF; --sunk:#E3E7EF; --ink:#11151F; --muted:#586177; --line:#D3D9E4;
-  --accent:#3346F0; --accent-ink:#FFFFFF; --accent-soft:#DDE1FF;
-  --good:#17895A; --mid:#B87400; --bad:#CF3440;
-  --display:"Avenir Next", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-  --body:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono:ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Consolas, monospace;
-  --r:14px;
+  color-scheme:dark;
+  --bg:#0B0F18; --surface:#121724; --raised:#1A2030; --sunk:#070A11;
+  --line:#232A3B; --line-strong:#334155;
+  --ink:#DFE2EF; --muted:#8F95AB; --faint:#5C6378;
+  --accent:#3346F0; --accent-press:#2232C7; --accent-ink:#FFFFFF; --accent-text:#BDC2FF; --accent-soft:rgba(51,70,240,.16);
+  --good:#4EDEA3; --good-fill:#00A572; --good-soft:rgba(16,185,129,.14);
+  --mid:#FFB95F; --mid-soft:rgba(245,158,11,.14);
+  --bad:#FF8A80; --bad-fill:#E11D48; --bad-soft:rgba(225,29,72,.16);
+  --hard:0 2px 0 #000;
+  --glow:rgba(51,70,240,.14);
+  --display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --bg:#0D1016; --surface:#161A23; --sunk:#1D2230; --ink:#E8EBF2; --muted:#8F98AC; --line:#2A3040;
-    --accent:#8C99FF; --accent-ink:#0B0E14; --accent-soft:#252B4D;
-    --good:#3DD68C; --mid:#F2B43A; --bad:#FF6B73;
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --bg:#F4F6FA; --surface:#FFFFFF; --raised:#EEF1F6; --sunk:#E4E8F0;
+    --line:#E2E8F0; --line-strong:#CBD5E1;
+    --ink:#0F172A; --muted:#556077; --faint:#94A0B4;
+    --accent-text:#2B3BD6; --accent-soft:rgba(51,70,240,.10);
+    --good:#0B8A5E; --good-fill:#10B981; --good-soft:rgba(16,185,129,.12);
+    --mid:#A96200; --mid-soft:rgba(245,158,11,.14);
+    --bad:#C8173E; --bad-fill:#E11D48; --bad-soft:rgba(225,29,72,.10);
+    --hard:0 2px 0 rgba(15,23,42,.28);
+    --glow:rgba(51,70,240,.08);
   }
 }
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#0D1016; --surface:#161A23; --sunk:#1D2230; --ink:#E8EBF2; --muted:#8F98AC; --line:#2A3040;
-  --accent:#8C99FF; --accent-ink:#0B0E14; --accent-soft:#252B4D;
-  --good:#3DD68C; --mid:#F2B43A; --bad:#FF6B73;
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#F4F6FA; --surface:#FFFFFF; --raised:#EEF1F6; --sunk:#E4E8F0;
+  --line:#E2E8F0; --line-strong:#CBD5E1;
+  --ink:#0F172A; --muted:#556077; --faint:#94A0B4;
+  --accent-text:#2B3BD6; --accent-soft:rgba(51,70,240,.10);
+  --good:#0B8A5E; --good-fill:#10B981; --good-soft:rgba(16,185,129,.12);
+  --mid:#A96200; --mid-soft:rgba(245,158,11,.14);
+  --bad:#C8173E; --bad-fill:#E11D48; --bad-soft:rgba(225,29,72,.10);
+  --hard:0 2px 0 rgba(15,23,42,.28);
+  --glow:rgba(51,70,240,.08);
 }
+
 *{box-sizing:border-box}
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0}
+:root{padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
 [hidden]{display:none!important}
-html,body{min-height:100%}
-body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-tap-highlight-color:transparent}
-.app{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:22px}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mono{font-family:var(--mono)}
+.label{font:600 .75rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0;display:flex;align-items:center;gap:8px}
+.label .ic{width:16px;height:16px}
 
 /* En-tête */
-.brand{display:flex;flex-direction:column;gap:6px}
-.brand h1{font:800 clamp(2.4rem,11vw,3.4rem)/.95 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance}
-.brand h1 span{color:var(--accent)}
-.brand p{margin:0;color:var(--muted);max-width:40ch}
-.label{font:700 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0}
-.block{display:flex;flex-direction:column;gap:10px}
-.row-between{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:600 .85rem var(--body)}
+.appbar{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.appbar-in{max-width:600px;margin:0 auto;padding-inline:16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;min-width:0}
+.logo-mark{width:38px;height:38px;border-radius:8px;background:var(--raised);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent-text)}
+.logo b{font:700 1.2rem/1 var(--display);letter-spacing:-.03em;display:flex;align-items:center;gap:6px}
+.logo b::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+.logo small{display:block;font:500 .68rem var(--mono);color:var(--muted);letter-spacing:.08em;margin-top:3px}
+.iconbtn{width:42px;height:42px;border-radius:8px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink)}
+.backbtn{display:flex;align-items:center;gap:8px;border:0;background:none;padding:8px 4px;font:700 .85rem var(--mono);letter-spacing:.06em;text-transform:uppercase}
 
-/* Thèmes */
-.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.theme{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 12px 11px;border-radius:var(--r);border:1.5px solid var(--line);background:var(--surface);min-height:64px;transition:border-color .15s,background .15s}
-.theme b{font:600 .95rem/1.2 var(--body)}
-.theme small{font:500 .72rem var(--mono);color:var(--muted)}
-.theme[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.theme[aria-pressed="true"] small{color:var(--accent)}
+.wrap{max-width:600px;margin:0 auto;padding-inline:16px;padding-block:20px 28px;display:flex;flex-direction:column;gap:26px}
 
-/* Segments durée */
-.seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--sunk);border-radius:12px;padding:4px;gap:4px}
-.seg button{border:0;background:transparent;border-radius:9px;padding:10px 0;font:700 .9rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* Accueil */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;border:1px solid var(--line);background:var(--surface);padding:5px 10px;border-radius:4px;font:600 .72rem var(--mono);letter-spacing:.1em;color:var(--good)}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--good)}
+.hero{display:flex;flex-direction:column;gap:12px}
+.hero h1{font:700 clamp(2.2rem,10vw,2.9rem)/1 var(--display);letter-spacing:-.035em;margin:0}
+.hero p{margin:0;font-size:1.08rem;line-height:1.45;color:var(--ink);max-width:36ch}
+.hero p u{white-space:nowrap;text-decoration-color:var(--good);text-decoration-thickness:2px;text-underline-offset:4px;font-weight:600}
 
-/* Joueurs */
-.players-form{display:flex;gap:8px}
-.players-form input{flex:1;min-width:0;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface)}
-.btn-sm{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:0 16px;font-weight:600}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border-radius:99px;background:var(--sunk);font-weight:500;font-size:.9rem}
-.chip button{border:0;background:var(--surface);width:24px;height:24px;border-radius:50%;line-height:1;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.count{font:600 .75rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.count.pill{background:var(--raised);padding:2px 7px;border-radius:4px;color:var(--ink)}
+.linkbtn{background:none;border:0;padding:4px 0;font:600 .78rem var(--mono);color:var(--accent-text)}
+
+.bar{display:flex;gap:4px;height:8px}
+.bar span{border-radius:99px;min-width:0;transition:flex-grow .4s}
+.bar .g{background:var(--good)} .bar .m{background:var(--mid)} .bar .b{background:var(--bad)} .bar .r{background:var(--raised)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--raised);border-radius:6px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--mono)}
+.stat strong{font-size:1.15rem;display:flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums}
+.stat strong::before{content:"";width:8px;height:8px;border-radius:50%}
+.stat span{font-size:.72rem;color:var(--muted)}
+.stat.g strong::before{background:var(--good)} .stat.m strong::before{background:var(--mid)} .stat.b strong::before{background:var(--bad)}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 10px;border-radius:4px;border:1px solid var(--line);background:var(--surface);font:500 .72rem var(--mono);letter-spacing:-.01em;color:var(--ink);transition:background .15s,border-color .15s}
+.tag small{font-size:.68rem;color:var(--muted)}
+.tag .ic{width:15px;height:15px;color:var(--muted)}
+.tag[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tag[aria-pressed="true"] small,.tag[aria-pressed="true"] .ic{color:rgba(255,255,255,.8)}
+
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.seg button{height:52px;border:1px solid var(--line);background:var(--surface);border-radius:4px;font:700 .95rem var(--mono);font-variant-numeric:tabular-nums;box-shadow:var(--hard)}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg button:active{transform:translateY(2px);box-shadow:none}
+
+.field{display:flex;gap:8px}
+.input{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:52px;padding:0 14px;border-radius:4px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.input:focus-within{border-color:var(--accent)}
+.input input{flex:1;min-width:0;border:0;background:none;outline:none;color:var(--ink);font-size:1rem}
+.btn2{height:52px;padding:0 16px;border-radius:4px;border:1px solid var(--line);background:var(--raised);font:700 .85rem var(--mono);box-shadow:var(--hard)}
+.btn2:active{transform:translateY(2px);box-shadow:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 6px 0 12px;border-radius:4px;background:var(--surface);border:1px solid var(--line);font:500 .8rem var(--mono)}
+.pchip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint)}
+.pchip.now{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 45%,transparent)}
+.pchip.now::before{background:var(--good)}
+.pchip em{font-style:normal;font-size:.65rem;font-weight:700;background:var(--good);color:#002113;padding:2px 5px;border-radius:3px;letter-spacing:.04em}
+.pchip button{border:0;background:none;width:28px;height:28px;display:grid;place-items:center;color:var(--muted);border-radius:4px}
 .hint{margin:0;color:var(--muted);font-size:.85rem}
 
-.toggle{display:flex;align-items:center;gap:10px;font-weight:500}
-.toggle input{width:20px;height:20px;accent-color:var(--accent)}
-.toggle.disabled{opacity:.45}
+.focus{display:flex;flex-direction:row;align-items:center;gap:14px;cursor:pointer}
+.focus input{appearance:none;-webkit-appearance:none;width:24px;height:24px;flex:none;border-radius:4px;border:2px solid var(--line-strong);background:var(--bg);display:grid;place-items:center;margin:0}
+.focus input:checked{background:var(--accent);border-color:var(--accent)}
+.focus input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.focus .txt{flex:1;display:flex;flex-direction:column;gap:3px}
+.focus b{font:700 1.02rem var(--display);letter-spacing:-.01em}
+.focus small{font:500 .75rem var(--mono);color:var(--bad)}
+.focus .ic{color:var(--mid)}
+.focus.off{opacity:.5;cursor:default}
+.focus.off small{color:var(--muted)}
 
-/* Bouton principal */
-.cta{border:0;border-radius:16px;background:var(--accent);color:var(--accent-ink);padding:18px;font:700 1.15rem var(--display);letter-spacing:-.01em;display:flex;justify-content:center;align-items:center;gap:10px}
-.cta:active{transform:translateY(1px)}
+details.panel{padding:0}
+details summary{list-style:none;cursor:pointer;padding:16px;display:flex;align-items:center;gap:10px;font:600 .78rem var(--mono);text-transform:uppercase;letter-spacing:.08em}
+details summary::-webkit-details-marker{display:none}
+details summary .ic{transition:transform .2s;color:var(--muted)}
+details[open] summary .ic.chev{transform:rotate(90deg)}
+details summary .end{margin-left:auto;color:var(--accent-text);text-transform:none;letter-spacing:0}
+details .inner{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+.rchip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:4px;background:var(--raised);font:500 .75rem var(--mono)}
+.rchip small{color:var(--muted)}
+textarea{width:100%;min-height:130px;padding:10px 12px;border-radius:4px;border:1px solid var(--line);background:var(--bg);font:500 .82rem/1.55 var(--mono);resize:vertical}
+textarea:focus{outline:none;border-color:var(--accent)}
+
+.dock{position:sticky;bottom:0;z-index:10;padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));margin-bottom:calc(-1 * env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.cta{width:100%;min-height:60px;border:0;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:700 1.2rem var(--display);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:var(--hard)}
+.cta:active{background:var(--accent-press);transform:translateY(2px);box-shadow:none}
 .cta:disabled{opacity:.4;cursor:not-allowed}
+.cta .ic{width:22px;height:22px}
+.foot{margin:0;text-align:center;color:var(--faint);font:500 .72rem var(--mono)}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--surface);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
-.stat strong{font:700 1.4rem/1 var(--mono);font-variant-numeric:tabular-nums}
-.stat span{font-size:.78rem;color:var(--muted)}
-.stat.good strong{color:var(--good)} .stat.mid strong{color:var(--mid)} .stat.bad strong{color:var(--bad)}
+/* Jeu */
+.status{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:99px;background:var(--raised);font:600 .78rem var(--mono);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62vw}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--good);flex:none}
+.status b{color:var(--accent-text)}
+.status.live{background:var(--bad-soft);color:var(--bad);text-transform:uppercase}
+.status.live::before{background:var(--bad);animation:blink 1s infinite}
+.status.over{background:var(--bad-soft);color:var(--bad);text-transform:uppercase}
+.status.over::before{background:var(--bad)}
+@keyframes blink{50%{opacity:.25}}
 
-details{background:var(--surface);border-radius:var(--r);padding:0 14px}
-summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:8px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font:700 1.1rem var(--mono);color:var(--muted)}
-details[open] summary::after{content:"–"}
-details .inner{padding-bottom:14px;display:flex;flex-direction:column;gap:10px}
-textarea{width:100%;min-height:130px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font:500 .85rem/1.5 var(--mono);resize:vertical}
-.review-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto}
-.review-list li{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;padding:6px 0;border-bottom:1px solid var(--line)}
-.review-list li span{color:var(--muted);font:500 .72rem var(--mono);white-space:nowrap}
+.stage{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.stage::before{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(var(--glow),transparent 70%);pointer-events:none}
+.stage::after{content:"";position:absolute;left:-60px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(color-mix(in srgb,var(--good) 10%,transparent),transparent 70%);pointer-events:none}
+.stage>*{position:relative;z-index:1}
+.stage-top{align-self:stretch;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bracket{font:600 .75rem var(--mono);letter-spacing:.1em;background:var(--raised);padding:5px 9px;border-radius:4px;color:var(--accent-text);text-transform:uppercase;display:inline-flex;align-items:center;gap:7px}
+.bracket::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-text)}
+.cardno{font:500 .72rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.kicker{font:600 .75rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:4px 0 -8px}
+.concept{font:700 clamp(1.9rem,8.5vw,2.6rem)/1.05 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.concept.pop{animation:pop .35s cubic-bezier(.2,.9,.3,1.25)}
+@keyframes pop{from{transform:translateY(8px) scale(.94);opacity:0}to{transform:none;opacity:1}}
 
-/* Écran de jeu */
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.back{border:0;background:var(--surface);border-radius:99px;padding:8px 14px;font-weight:600;font-size:.9rem}
-.turn{font:700 .8rem var(--mono);background:var(--accent-soft);color:var(--accent);padding:7px 12px;border-radius:99px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.card{background:var(--surface);border-radius:22px;padding:22px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;box-shadow:0 1px 0 var(--line),0 12px 32px -18px rgba(17,21,31,.35)}
-.card .label{color:var(--accent)}
-.concept{font:800 clamp(1.9rem,9vw,2.8rem)/1.02 var(--display);letter-spacing:-.025em;margin:0;text-wrap:balance;overflow-wrap:anywhere;min-height:2.1em;display:flex;align-items:center}
-.concept.pop{animation:pop .35s cubic-bezier(.2,.9,.3,1.3)}
-@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
-
-.ring{position:relative;width:min(58vw,220px);aspect-ratio:1;max-width:100%}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring .track{fill:none;stroke:var(--sunk);stroke-width:9}
-.ring .prog{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;transition:stroke .3s}
+.ring{position:relative;width:min(66vw,250px);aspect-ratio:1;max-width:100%}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.ring .track{fill:none;stroke:var(--line);stroke-width:5}
+.ring .prog{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;transition:stroke .3s}
 .ring.warn .prog{stroke:var(--mid)}
-.ring.danger .prog{stroke:var(--bad)}
-.ring .time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.ring .time b{font:700 clamp(2.2rem,12vw,3.2rem)/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
-.ring .time small{font:500 .75rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
-.ring.danger .time b{color:var(--bad)}
+.ring.danger .prog{stroke:var(--bad);filter:drop-shadow(0 0 6px var(--bad))}
+.ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.ring .alert{font:600 .72rem var(--mono);letter-spacing:.14em;color:var(--bad);display:flex;align-items:center;gap:6px}
+.ring .alert .ic{width:15px;height:15px}
+.ring .num{font:700 clamp(3rem,15vw,3.9rem)/1 var(--mono);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.ring.danger .num{color:var(--bad);text-shadow:0 0 18px color-mix(in srgb,var(--bad) 55%,transparent)}
+.ring .state{font:700 .82rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--good);display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:6px}
+.ring .state .ic{width:16px;height:16px}
+.ring.running .state{color:var(--accent-text);background:var(--accent-soft)}
+.ring.danger.running .state{background:var(--bad-fill);color:#fff}
+.ring.paused .state{color:var(--mid);background:var(--mid-soft)}
 .ring.pulse{animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{50%{transform:scale(1.03)}}
+@keyframes pulse{50%{transform:scale(1.025)}}
 
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
-.controls .cta{grid-column:1 / -1}
-.ghost{border:1.5px solid var(--line);background:transparent;border-radius:14px;padding:14px;font-weight:600}
+.tip{align-self:stretch;display:flex;align-items:center;gap:12px;text-align:left;background:color-mix(in srgb,var(--raised) 70%,transparent);border-radius:6px;padding:12px 14px;font-size:.95rem}
+.tip .ic{color:var(--mid);width:20px;height:20px}
 
-.reveal{display:flex;flex-direction:column;gap:14px;width:100%;text-align:left}
-.reveal h2{font:700 1.15rem var(--display);margin:0}
-.keys{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.keys li{background:var(--sunk);border-radius:8px;padding:6px 10px;font-size:.92rem}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metacell{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px}
+.metacell i{width:36px;height:36px;border-radius:4px;background:var(--raised);display:grid;place-items:center;color:var(--accent-text);flex:none}
+.metacell i.z{color:var(--mid)}
+.metacell div{display:flex;flex-direction:column;min-width:0}
+.metacell small{font:500 .68rem var(--mono);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.metacell b{font:600 .88rem var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.controls .full{grid-column:1 / -1}
+.ghost{min-height:56px;border-radius:6px;border:1px solid var(--line);background:var(--raised);font:700 .95rem var(--mono);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:var(--hard)}
+.ghost:active{transform:translateY(2px);box-shadow:none}
+.controls .cta{min-height:56px;font-size:1.1rem}
+.pass{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.92rem;margin:0}
+.pass .ic{width:20px;height:20px}
+
+/* Après le chrono */
+.done-card{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;position:relative;overflow:hidden}
+.done-card::before{content:"";position:absolute;right:-40px;top:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(var(--glow),transparent 70%)}
+.done-card>div{position:relative;min-width:0;display:flex;flex-direction:column;gap:4px}
+.done-card .br{font:600 .72rem var(--mono);letter-spacing:.12em;color:var(--good);text-transform:uppercase}
+.done-card h2{font:700 1.55rem/1.1 var(--display);letter-spacing:-.03em;margin:0;overflow-wrap:anywhere}
+.mini{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--sunk);border-radius:6px;padding:10px 12px;font:700 .75rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.mini .ic{width:26px;height:26px}
+
+.keys{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.key{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:8px 14px;border-radius:4px;border:1px solid transparent;background:var(--sunk);color:var(--muted);font:500 .85rem/1.35 var(--mono);text-align:left;transition:background .15s,color .15s}
+.key .ic{width:18px;height:18px}
+.key[aria-pressed="true"]{background:var(--raised);color:var(--ink)}
+.key[aria-pressed="true"] .ic{color:var(--good)}
+.cited{font:600 .72rem var(--mono);color:var(--good);background:var(--surface);border:1px solid var(--line);padding:3px 8px;border-radius:4px;font-variant-numeric:tabular-nums}
+
 .rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.rate button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:600;font-size:.88rem}
-.rate button i{font-style:normal;width:12px;height:12px;border-radius:50%}
-.rate .r-good i{background:var(--good)} .rate .r-mid i{background:var(--mid)} .rate .r-bad i{background:var(--bad)}
-.rate button:hover{border-color:var(--ink)}
+.rate button{min-height:68px;border-radius:6px;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:600 .8rem var(--mono);box-shadow:var(--hard)}
+.rate button:active{transform:translateY(2px);box-shadow:none}
+.rate button span{display:flex;align-items:center;gap:6px;font:700 1.45rem/1 var(--display)}
+.rate button .ic{width:20px;height:20px;stroke-width:2.6}
+.r-bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 30%,transparent)!important} .r-bad span{color:var(--bad)}
+.r-mid{background:var(--mid-soft);border-color:color-mix(in srgb,var(--mid) 30%,transparent)!important} .r-mid span{color:var(--mid)}
+.r-good{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 30%,transparent)!important} .r-good span{color:var(--good)}
+.rate button.suggest{outline:2px solid currentColor;outline-offset:2px}
+.r-bad.suggest{color:var(--bad)} .r-mid.suggest{color:var(--mid)} .r-good.suggest{color:var(--good)}
+.rate button.suggest em{color:var(--ink)}
+.rate em{font-style:normal;color:var(--ink)}
 
-.board{display:flex;flex-direction:column;gap:6px}
-.board ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
-.board li{display:flex;justify-content:space-between;background:var(--surface);border-radius:10px;padding:9px 12px;font-weight:500}
-.board li.now{outline:2px solid var(--accent)}
-.board li b{font:700 1rem var(--mono);font-variant-numeric:tabular-nums}
+.board{display:flex;flex-direction:column;gap:8px}
+.board ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.board li{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 14px}
+.board li.now{background:var(--raised);border-color:var(--line-strong)}
+.board .rank{font:700 .85rem var(--mono);color:var(--muted);width:14px}
+.board li.lead .rank{color:var(--mid)}
+.board .av{width:36px;height:36px;border-radius:50%;background:var(--raised);display:grid;place-items:center;font:700 .85rem var(--mono);flex:none;color:var(--muted)}
+.board li.now .av{background:var(--accent);color:#fff}
+.board li.lead .av{color:var(--mid)}
+.board .who{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.board .who b{font:700 1.05rem var(--display);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.board .who b em{font:600 .62rem var(--mono);font-style:normal;background:var(--line-strong);color:var(--ink);padding:2px 6px;border-radius:3px;letter-spacing:.06em}
+.board .who small{font:500 .72rem var(--mono);color:var(--muted)}
+.board li.lead .who small{color:var(--mid)}
+.board .pts{font:700 1.5rem/1 var(--display);font-variant-numeric:tabular-nums}
+.board .pts small{font:500 .72rem var(--mono);color:var(--muted);margin-left:3px}
 
-.foot{color:var(--muted);font-size:.8rem;text-align:center;margin:0}
+@media (min-width:600px){.wrap{padding-block:28px 32px}}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
-
 </head>
 <body>
-<main class="app">
-  <!-- Accueil -->
-  <section id="home" class="app" style="padding:0">
-    <header class="brand">
-      <p class="label">Révision orale · informatique</p>
-      <h1>Dis-moi <span>tout.</span></h1>
-      <p>Un concept tombe au hasard. Tu as <strong id="durLabel">60 secondes</strong> pour dire à voix haute tout ce que tu sais dessus.</p>
-    </header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 9l3 3-3 3M12 15h5"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-userplus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></symbol>
+  <symbol id="i-timeroff" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M9 2h6M5 5l14 16"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+  <symbol id="i-checkc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-equal" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0M12 17v5"/></symbol>
+  <symbol id="i-alarm" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M11 6h10M11 12h10M11 18h10M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></symbol>
+  <symbol id="i-bars" viewBox="0 0 24 24"><path d="M3 21h18M6 17v-5M12 17V5M18 17v-8"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2l10 6-10 6L2 8z"/><path d="M2 16l10 6 10-6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-4 3 3 6-7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 1 1 1.3-9.8A6 6 0 0 1 20 11.5a3.8 3.8 0 0 1-2.5 7.5z"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></symbol>
+  <symbol id="i-tree" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v5M5 16v-4h14v4"/></symbol>
+  <symbol id="i-network" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5V12M12 12l-5.3 5M12 12l5.3 5"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+</svg>
 
-    <div class="block">
-      <div class="row-between">
-        <p class="label">Thèmes</p>
-        <button class="linkbtn" id="allThemes" type="button">Tout sélectionner</button>
-      </div>
-      <div class="themes" id="themes"></div>
+<header class="appbar">
+  <div class="appbar-in">
+    <div class="logo" id="logo">
+      <span class="logo-mark"><svg class="ic"><use href="#i-terminal"/></svg></span>
+      <div><b>Dis-moi tout.</b><small>// arène de révision</small></div>
     </div>
+    <button class="backbtn" id="backBtn" type="button" hidden><svg class="ic"><use href="#i-left"/></svg>Thèmes</button>
+    <span class="status" id="status" hidden></span>
+    <button class="iconbtn" id="themeBtn" type="button" aria-label="Changer de thème"><svg class="ic"><use id="themeIcon" href="#i-auto"/></svg></button>
+  </div>
+</header>
 
-    <div class="block">
-      <p class="label">Temps de parole</p>
-      <div class="seg" id="durations" role="group" aria-label="Durée du chrono"></div>
-    </div>
-
-    <div class="block">
-      <p class="label">Joueurs <span style="text-transform:none;letter-spacing:0">(optionnel)</span></p>
-      <form class="players-form" id="playerForm">
-        <input id="playerName" type="text" maxlength="20" placeholder="Prénom d'un pote" autocomplete="off">
-        <button class="btn-sm" type="submit">Ajouter</button>
-      </form>
-      <div class="chips" id="players"></div>
-      <p class="hint" id="playersHint">Seul, tu révises. À plusieurs, vous vous passez le téléphone et les autres notent la réponse.</p>
-    </div>
-
-    <label class="toggle" id="reviewToggleWrap"><input type="checkbox" id="reviewOnly"> <span id="reviewToggleText">Seulement mes concepts « à revoir »</span></label>
-
-    <button class="cta" id="drawBtn" type="button">Tirer un concept →</button>
-
-    <div class="block">
-      <p class="label">Ta progression</p>
-      <div class="stats">
-        <div class="stat good"><strong id="sGood">0</strong><span>maîtrisés</span></div>
-        <div class="stat mid"><strong id="sMid">0</strong><span>moyens</span></div>
-        <div class="stat bad"><strong id="sBad">0</strong><span>à revoir</span></div>
-      </div>
-    </div>
-
-    <details id="reviewDetails">
-      <summary>Mes concepts à revoir</summary>
-      <div class="inner">
-        <ul class="review-list" id="reviewList"></ul>
-        <button class="linkbtn" id="resetProgress" type="button" style="align-self:flex-start">Effacer ma progression</button>
-        <p class="hint" id="resetConfirm" hidden>Appuie encore une fois pour confirmer.</p>
-      </div>
-    </details>
-
-    <details>
-      <summary>Mes concepts perso</summary>
-      <div class="inner">
-        <p class="hint">Un concept par ligne. Ajoute les points clés après une barre verticale. Ils apparaissent dans le thème « Mes concepts ».</p>
-        <textarea id="customText" spellcheck="false" placeholder="Loi de Moore | transistors, doublement, ~2 ans&#10;Kafka | log distribué, topics, partitions"></textarea>
-        <button class="btn-sm" id="saveCustom" type="button" style="align-self:flex-start;padding:10px 16px">Enregistrer</button>
-        <p class="hint" id="customSaved" hidden>Enregistré.</p>
-      </div>
-    </details>
-
-    <p class="foot">Ta progression reste sur ce téléphone. Une fois installée, l'appli marche aussi sans Internet.</p>
+<!-- Accueil -->
+<main class="wrap" id="home">
+  <section class="hero">
+    <span class="eyebrow">RÉVISION ORALE · INFORMATIQUE</span>
+    <h1>Dis-moi tout.</h1>
+    <p>Un concept tombe au hasard. Tu as <u id="durLabel">1 minute</u> pour dire à voix haute tout ce que tu sais dessus.</p>
   </section>
 
-  <!-- Jeu -->
-  <section id="play" class="app" style="padding:0" hidden>
-    <div class="topbar">
-      <button class="back" id="backBtn" type="button">← Thèmes</button>
-      <span class="turn" id="turn" hidden></span>
+  <section class="panel">
+    <div class="row"><p class="label">Radar de compétences</p><span class="count" id="ratedCount">0/250 notées</span></div>
+    <div class="bar" id="bar"><span class="g"></span><span class="m"></span><span class="b"></span><span class="r"></span></div>
+    <div class="stats">
+      <div class="stat g"><strong id="sGood">0</strong><span>Maîtrisés</span></div>
+      <div class="stat m"><strong id="sMid">0</strong><span>Moyens</span></div>
+      <div class="stat b"><strong id="sBad">0</strong><span>À revoir</span></div>
     </div>
+  </section>
 
-    <div class="card">
-      <p class="label" id="cTheme">Thème</p>
-      <h2 class="concept" id="cWord">Concept</h2>
+  <section class="row" style="flex-direction:column;align-items:stretch;gap:12px">
+    <div class="row"><p class="label"><svg class="ic"><use href="#i-layers"/></svg>Thèmes <span class="count pill" id="selCount">1/10</span></p><button class="linkbtn" id="allThemes" type="button">Tout sélectionner</button></div>
+    <div class="tags" id="themes"></div>
+  </section>
 
-      <div class="ring" id="ring">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle class="track" cx="60" cy="60" r="52"></circle>
-          <circle class="prog" id="prog" cx="60" cy="60" r="52"></circle>
-        </svg>
-        <div class="time"><b id="tNum">1:00</b><small id="tState">prêt ?</small></div>
+  <section class="row" style="flex-direction:column;align-items:stretch;gap:12px">
+    <p class="label"><svg class="ic" style="color:var(--mid)"><use href="#i-timer"/></svg>Durée du chrono</p>
+    <div class="seg" id="durations" role="group" aria-label="Durée du chrono"></div>
+  </section>
+
+  <section class="row" style="flex-direction:column;align-items:stretch;gap:12px">
+    <div class="row"><p class="label"><svg class="ic" style="color:var(--good)"><use href="#i-users"/></svg>Joueurs (tour de table)</p><span class="count" id="playerCount" style="color:var(--good)"></span></div>
+    <form class="field" id="playerForm">
+      <label class="input"><input id="playerName" type="text" maxlength="20" placeholder="Prénom d'un pote…" autocomplete="off"><svg class="ic"><use href="#i-userplus"/></svg></label>
+      <button class="btn2" type="submit">Ajouter</button>
+    </form>
+    <div class="chips" id="players"></div>
+    <p class="hint" id="playersHint">Optionnel. Seul, tu révises. À plusieurs, vous vous passez le téléphone et les autres notent la réponse.</p>
+  </section>
+
+  <label class="panel focus" id="focusCard">
+    <input type="checkbox" id="reviewOnly">
+    <span class="txt"><b>Mode Focus : « À revoir »</b><small id="focusText">Note des concepts « à revoir » pour l'activer</small></span>
+    <svg class="ic"><use href="#i-filter"/></svg>
+  </label>
+
+  <details class="panel" id="reviewDetails">
+    <summary><svg class="ic chev"><use href="#i-chev"/></svg><span id="reviewTitle">Mes concepts à revoir (0)</span></summary>
+    <div class="inner">
+      <div class="chips" id="reviewList"></div>
+      <button class="linkbtn" id="resetProgress" type="button" style="align-self:flex-start;color:var(--bad)">Effacer ma progression</button>
+      <p class="hint" id="resetConfirm" hidden>Appuie encore une fois pour confirmer.</p>
+    </div>
+  </details>
+
+  <details class="panel">
+    <summary><svg class="ic chev"><use href="#i-chev"/></svg><span id="customTitle">Mes fiches perso (0)</span><span class="end">+ Créer</span></summary>
+    <div class="inner">
+      <p class="hint">Un concept par ligne, les points clés après une barre verticale. Ils apparaissent dans le thème « Mes fiches ».</p>
+      <textarea id="customText" spellcheck="false" placeholder="Loi de Moore | transistors, doublement, ~2 ans&#10;Kafka | log distribué, topics, partitions"></textarea>
+      <div class="row" style="justify-content:flex-start"><button class="btn2" id="saveCustom" type="button">Enregistrer</button><span class="hint" id="customSaved" hidden>Enregistré.</span></div>
+    </div>
+  </details>
+
+  <p class="foot">Progression stockée sur ce téléphone · marche hors ligne</p>
+
+  <div class="dock"><button class="cta" id="drawBtn" type="button"><svg class="ic"><use href="#i-dice"/></svg><span id="drawText">Tirer un concept</span><svg class="ic"><use href="#i-right"/></svg></button></div>
+</main>
+
+<!-- Jeu -->
+<main class="wrap" id="play" hidden>
+  <section class="stage" id="stage">
+    <div class="stage-top"><span class="bracket" id="cTheme">[DEV FULL STACK]</span><span class="cardno" id="cardNo">1:00</span></div>
+    <p class="kicker" id="kicker">Concept à expliquer</p>
+    <h1 class="concept" id="cWord">Concept</h1>
+    <div class="ring" id="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="track" cx="60" cy="60" r="54"></circle>
+        <circle class="prog" id="prog" cx="60" cy="60" r="54"></circle>
+      </svg>
+      <div class="center">
+        <span class="alert" id="alert" hidden><svg class="ic"><use href="#i-alarm"/></svg>FIN IMMINENTE</span>
+        <span class="num" id="tNum">1:00</span>
+        <span class="state" id="tState">Prêt ?</span>
       </div>
+    </div>
+    <div class="tip" id="tip"><svg class="ic"><use href="#i-bulb"/></svg><span id="tipText">Respire un grand coup et prépare tes arguments.</span></div>
+  </section>
 
-      <div class="controls" id="controls"></div>
+  <section class="done-card" id="doneCard" hidden>
+    <div><span class="br" id="dTheme">[DEV FULL STACK]</span><h2 id="dWord">Concept</h2></div>
+    <span class="mini" id="dMini"><svg class="ic"><use href="#i-timeroff"/></svg><span id="dTime">0:00</span></span>
+  </section>
 
-      <div class="reveal" id="reveal" hidden>
-        <h2>Points à citer</h2>
-        <ul class="keys" id="keys"></ul>
-        <p class="label" id="rateLabel">Comment ça s'est passé ?</p>
-        <div class="rate">
-          <button class="r-bad" data-rate="bad" type="button"><i></i>À revoir</button>
-          <button class="r-mid" data-rate="mid" type="button"><i></i>Moyen</button>
-          <button class="r-good" data-rate="good" type="button"><i></i>Maîtrisé</button>
-        </div>
+  <div class="meta" id="meta">
+    <div class="metacell"><i><svg class="ic"><use href="#i-layers"/></svg></i><div><small>Tirage</small><b id="mDeck">Carte 01 / 28</b></div></div>
+    <div class="metacell"><i class="z"><svg class="ic"><use href="#i-timer"/></svg></i><div><small>Chrono</small><b id="mDur">1 min</b></div></div>
+  </div>
+
+  <div class="controls" id="controls"></div>
+  <p class="pass" id="pass" hidden><svg class="ic"><use href="#i-phone"/></svg><span id="passText"></span></p>
+
+  <section class="row" id="reveal" style="flex-direction:column;align-items:stretch;gap:22px" hidden>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:12px">
+      <div class="row"><p class="label"><svg class="ic" style="color:var(--mid)"><use href="#i-list"/></svg>Points à citer</p><span class="cited" id="cited">0/4 CITÉS</span></div>
+      <p class="hint">Touche les points que tu as vraiment cités.</p>
+      <div class="keys" id="keys"></div>
+    </div>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:12px">
+      <div class="row"><p class="label" style="color:var(--ink)"><svg class="ic" style="color:var(--accent-text)"><use href="#i-users"/></svg><span id="rateLabel">Ton verdict</span></p><span class="count" id="rateHint">1 choix</span></div>
+      <div class="rate">
+        <button class="r-bad" data-rate="bad" type="button"><span><svg class="ic"><use href="#i-x"/></svg><b class="pt">0</b></span><em>À revoir</em></button>
+        <button class="r-mid" data-rate="mid" type="button"><span><svg class="ic"><use href="#i-equal"/></svg><b class="pt">1</b></span><em>Moyen</em></button>
+        <button class="r-good" data-rate="good" type="button"><span><svg class="ic"><use href="#i-check"/></svg><b class="pt">2</b></span><em>Maîtrisé</em></button>
       </div>
     </div>
+  </section>
 
-    <div class="board" id="board" hidden>
-      <p class="label">Scores · maîtrisé 2 pts, moyen 1 pt</p>
-      <ol id="boardList"></ol>
-    </div>
+  <section class="board" id="board" hidden>
+    <div class="row"><p class="label" style="color:var(--ink)"><svg class="ic" style="color:var(--good)"><use href="#i-bars"/></svg>Classement</p><span class="count">maîtrisé 2 pts · moyen 1 pt</span></div>
+    <ol id="boardList"></ol>
   </section>
 </main>
 
+<script src="concepts.js"></script>
 <script>
-const RAW = {
-fullstack:["Dev Full Stack",`API REST|ressources, verbes HTTP, stateless, codes de statut
-GraphQL|schéma typé, une seule route, queries et mutations, évite l'over-fetching
-CORS|same-origin policy, en-têtes Access-Control-*, requête preflight OPTIONS
-JWT|header.payload.signature, stateless, expiration, pas de secrets dans le payload
-Cookies vs localStorage|HttpOnly, risque XSS, CSRF, envoi automatique au serveur
-Virtual DOM|diff, réconciliation, React, mises à jour minimales du DOM
-SSR vs CSR|rendu serveur vs navigateur, SEO, hydratation, premier affichage
-Hydratation|HTML rendu côté serveur, le JS attache les événements, erreurs de mismatch
-Bundler (Webpack, Vite)|modules ES, HMR, tree shaking, minification
-Event loop JavaScript|call stack, file de tâches, microtâches, non bloquant
-Promises et async/await|asynchrone, then/catch, try/catch, Promise.all
-Closures|portée lexicale, fonction qui capture ses variables, encapsulation
-Hoisting|var vs let/const, déclarations remontées, temporal dead zone
-Middleware (Express)|chaîne req/res, next(), auth, logs, gestion d'erreurs
-ORM|mapping objet-relationnel, Prisma, Hibernate, problème N+1, migrations
-WebSockets|connexion bidirectionnelle, temps réel, upgrade depuis HTTP
-Responsive design|media queries, mobile first, flexbox et grid, viewport
-Flexbox vs Grid|une dimension vs deux dimensions, alignement, placement
-Accessibilité web|WCAG, ARIA, contraste, navigation au clavier
-Gestion d'état (state management)|Redux, Context, store, flux unidirectionnel
-TypeScript|typage statique, interfaces, inférence, compilé en JavaScript
-Hooks React|useState, useEffect, règles des hooks, tableau de dépendances
-Pagination d'API|offset/limit, curseur, performance, total
-Rate limiting|quota de requêtes, code 429, token bucket, protection contre les abus
-Cache HTTP|Cache-Control, ETag, réponse 304, CDN
-Monorepo|plusieurs projets dans un dépôt, code partagé, Nx, Turborepo
-Tests unitaires vs E2E|pyramide des tests, Jest, Playwright, mocks
-PWA|service worker, manifest, hors ligne, installable`],
-ia:["IA & Machine Learning",`Réseau de neurones|couches, poids et biais, fonction d'activation, rétropropagation
-Rétropropagation|gradient, règle de la chaîne, mise à jour des poids
-Descente de gradient|learning rate, minimum local, SGD, mini-batch
-Overfitting|apprend par cœur le train, généralise mal, régularisation, jeu de validation
-Régularisation|L1 et L2, dropout, pénalité, limite la complexité
-Fonction d'activation|ReLU, sigmoïde, tanh, apporte la non-linéarité
-CNN|convolutions, filtres, pooling, vision par ordinateur
-RNN et LSTM|séquences, mémoire, gradient qui disparaît, portes
-Transformer|attention, parallélisable, encodeur/décodeur, 2017
-Mécanisme d'attention|query, key, value, pondération, self-attention
-LLM|modèle de langage, prédiction du prochain token, pré-entraînement, milliards de paramètres
-Tokenisation|découpage en tokens, BPE, vocabulaire, coût et fenêtre de contexte
-Embeddings|vecteurs denses, similarité cosinus, espace sémantique
-Fine-tuning|réentraînement sur données ciblées, LoRA, transfert
-RAG|recherche puis génération, base vectorielle, contexte injecté, moins d'hallucinations
-Hallucination|réponse fausse mais plausible, ancrage sur des sources, vérification
-Prompt engineering|instructions claires, few-shot, chaîne de pensée, contexte
-Apprentissage supervisé|données étiquetées, classification, régression
-Apprentissage non supervisé|sans étiquettes, clustering, réduction de dimension
-Apprentissage par renforcement|agent, environnement, récompense, politique
-GAN|générateur contre discriminateur, jeu adversarial, images synthétiques
-Modèles de diffusion|ajout puis retrait de bruit, génération d'images, Stable Diffusion
-Transfer learning|modèle pré-entraîné, réutilisation, peu de données
-Fonction de perte|erreur à minimiser, MSE, cross-entropy
-Softmax|scores vers probabilités, somme à 1, multi-classe
-Batch normalization|normalise les activations, stabilise, accélère l'entraînement
-Agents IA|outils, planification, boucle action/observation, autonomie
-Biais algorithmique|données biaisées, équité, discrimination, audit
-Température d'un LLM|aléa de l'échantillonnage, créativité vs déterminisme`],
-data:["Data Science",`Régression linéaire|relation linéaire, moindres carrés, coefficients, R²
-Régression logistique|classification binaire, sigmoïde, probabilité, log-loss
-Arbre de décision|découpages, entropie ou Gini, interprétable, surapprentissage
-Random Forest|bagging, plusieurs arbres, vote, importance des variables
-Gradient boosting|arbres successifs, corrige les erreurs, XGBoost, LightGBM
-K-means|clustering, centroïdes, choix de k, méthode du coude
-ACP (PCA)|réduction de dimension, variance expliquée, composantes orthogonales
-Validation croisée|k-fold, estimation robuste, évite un split chanceux
-Compromis biais-variance|sous-apprentissage vs sur-apprentissage, complexité du modèle
-Matrice de confusion|vrais positifs, faux positifs, vrais négatifs, faux négatifs
-Précision vs rappel|faux positifs vs faux négatifs, F1-score, seuil
-Courbe ROC et AUC|TPR vs FPR, seuils, 0,5 = hasard
-Feature engineering|créer des variables, encodage, transformation, connaissance métier
-Normalisation vs standardisation|min-max, z-score, mise à l'échelle, algos sensibles aux distances
-Valeurs manquantes|suppression, imputation, moyenne ou médiane, MCAR/MAR
-Données déséquilibrées|classe minoritaire, SMOTE, pondération, métriques adaptées
-One-hot encoding|variables catégorielles, colonnes binaires, piège des dummies
-p-value|hypothèse nulle, significativité, seuil 0,05, souvent mal interprétée
-Test A/B|groupe contrôle, variante, significativité, taille d'échantillon
-Corrélation vs causalité|lien statistique, variable confondante, expérience contrôlée
-Loi normale|courbe en cloche, moyenne, écart-type, règle 68-95-99,7
-Théorème central limite|moyenne d'échantillons, tend vers une loi normale, n grand
-DataFrame Pandas|tableau indexé, groupby, merge, Series
-Analyse exploratoire (EDA)|visualisation, statistiques descriptives, anomalies, hypothèses
-Valeurs aberrantes (outliers)|IQR, z-score, impact sur la moyenne, erreur ou vrai signal
-Data leakage|info du test dans l'entraînement, scores trop beaux, pipeline
-Séries temporelles|tendance, saisonnalité, stationnarité, ARIMA
-Médiane vs moyenne|robustesse aux outliers, distribution asymétrique`],
-secu:["Cybersécurité",`Faille XSS|injection de script, échappement des sorties, CSP, cookies HttpOnly
-Injection SQL|requêtes paramétrées, entrée utilisateur, ORM, moindre privilège
-CSRF|requête forgée depuis un autre site, token anti-CSRF, SameSite
-Chiffrement symétrique|une seule clé, AES, rapide, problème du partage de clé
-Chiffrement asymétrique|clé publique et privée, RSA, échange de clés, signature
-Fonction de hachage|sens unique, SHA-256, intégrité, collisions
-Salage des mots de passe|sel aléatoire, bcrypt ou argon2, contre les rainbow tables
-HTTPS et TLS|certificat, handshake, chiffrement en transit, autorité de certification
-Authentification vs autorisation|qui tu es vs ce que tu as le droit de faire, RBAC
-MFA|plusieurs facteurs, savoir/avoir/être, TOTP, clés physiques
-OAuth 2.0|délégation d'accès, access token, authorization code, scopes
-Phishing|ingénierie sociale, faux site, urgence, vérifier l'expéditeur
-Attaque DDoS|saturation, botnet, mitigation, CDN
-Man-in-the-middle|interception, ARP spoofing, TLS, vérification de certificat
-Principe du moindre privilège|droits minimaux, réduit la surface d'attaque
-Pare-feu|filtrage de paquets, règles, stateful, WAF
-Zero Trust|ne jamais faire confiance, toujours vérifier, micro-segmentation
-Ransomware|chiffrement des données, rançon, sauvegardes hors ligne, isolation
-Buffer overflow|dépassement de tampon, écrasement de la pile, ASLR, canaris
-OWASP Top 10|risques web majeurs, contrôle d'accès, injection, mauvaise config
-Test d'intrusion (pentest)|autorisé, reconnaissance, exploitation, rapport
-Faille zero-day|inconnue de l'éditeur, pas de correctif, exploit
-Signature numérique|clé privée signe, clé publique vérifie, intégrité, non-répudiation
-VPN|tunnel chiffré, confidentialité, accès distant
-SIEM|centralisation des logs, corrélation, alertes, SOC
-Attaque par force brute|essais exhaustifs, verrouillage, rate limit, mots de passe longs`],
-devops:["DevOps & Cloud",`CI/CD|intégration continue, déploiement continu, pipeline, tests automatisés
-Docker|conteneur, image, Dockerfile, isolation
-Conteneur vs machine virtuelle|noyau partagé vs hyperviseur, légèreté, démarrage rapide
-Kubernetes|orchestration, pods, services, scaling automatique
-Pod Kubernetes|plus petite unité, un ou plusieurs conteneurs, IP partagée
-Infrastructure as Code|Terraform, versionnée, reproductible, déclaratif
-Microservices|services indépendants, API, déploiement séparé, complexité réseau
-Load balancer|répartition du trafic, haute dispo, round robin, health checks
-Scalabilité horizontale vs verticale|plus de machines vs machine plus puissante
-Serverless|fonctions à la demande, pas de serveur à gérer, cold start, paiement à l'usage
-IaaS, PaaS, SaaS|niveaux d'abstraction, qui gère quoi, exemples concrets
-Stratégies de branches Git|merge vs rebase, GitFlow, trunk-based
-Blue-green deployment|deux environnements, bascule du trafic, rollback rapide
-Canary release|déploiement progressif, petit pourcentage d'utilisateurs, monitoring
-Observabilité|logs, métriques, traces, Prometheus et Grafana
-Reverse proxy|Nginx, intermédiaire, terminaison TLS, cache, routage
-CDN|serveurs proches des utilisateurs, cache des fichiers statiques, latence
-Variables d'environnement|config hors du code, secrets, méthode 12-factor
-Docker Compose|plusieurs conteneurs, fichier YAML, réseau local, dev
-Ansible|gestion de configuration, sans agent, playbooks, idempotence
-SLA, SLO, SLI|engagement contractuel, objectif, indicateur mesuré
-Haute disponibilité|redondance, pas de point unique de défaillance, failover, 99,9 %
-Registre d'images|Docker Hub, stockage d'images, tags et versions
-Helm|gestionnaire de paquets Kubernetes, charts, templates`],
-bdd:["Bases de données",`SQL vs NoSQL|relationnel vs document ou clé-valeur, schéma, scalabilité
-Normalisation|formes normales, éviter la redondance, 1NF, 2NF, 3NF
-Clé primaire et clé étrangère|identifiant unique, relations, intégrité référentielle
-Jointures SQL|INNER, LEFT, RIGHT, FULL
-Index|accélère la lecture, B-tree, ralentit l'écriture
-Transactions ACID|atomicité, cohérence, isolation, durabilité
-Théorème CAP|cohérence, disponibilité, tolérance au partitionnement, on en garde deux
-Niveaux d'isolation|read committed, repeatable read, serializable, lectures fantômes
-Interblocage (deadlock) en BDD|verrous croisés, détection, ordre d'acquisition des verrous
-Réplication|primaire et réplicas, répartition des lectures, haute dispo
-Sharding|partitionnement horizontal, clé de sharding, répartition des données
-GROUP BY et HAVING|agrégation, filtre après regroupement, COUNT, SUM
-Sous-requête|requête imbriquée, IN, EXISTS, corrélée
-Vue SQL|requête enregistrée, table virtuelle, simplification, sécurité
-Procédure stockée|code dans la base, réutilisable, paramètres
-MongoDB|documents BSON, collections, schéma flexible
-Redis|clé-valeur en mémoire, cache, TTL, pub/sub
-Problème N+1|une requête par élément, eager loading, jointure
-Modèle entité-association|entités, attributs, cardinalités, MCD
-Dénormalisation|redondance volontaire, lectures rapides, entrepôt de données
-Base de données vectorielle|embeddings, recherche par similarité, RAG
-Data warehouse|OLAP, schéma en étoile, historique, analytique
-OLTP vs OLAP|transactions vs analyse, stockage en lignes vs colonnes
-Migration de schéma|versionner la structure, up/down, Flyway, Liquibase`],
-algo:["Algo & Structures",`Complexité Big O|temps et espace, pire cas, O(n), O(log n)
-Recherche dichotomique|tableau trié, divise par deux, O(log n)
-Tri rapide (quicksort)|pivot, partition, O(n log n) en moyenne, O(n²) au pire
-Tri fusion (merge sort)|diviser pour régner, fusion, stable, O(n log n)
-Récursivité|cas de base, appel à soi-même, pile d'appels, stack overflow
-Programmation dynamique|sous-problèmes qui se répètent, mémoïsation, tabulation
-Algorithme glouton|choix localement optimal, pas toujours optimal globalement, rendu de monnaie
-Pile (stack)|LIFO, push et pop, pile d'appels, annuler
-File (queue)|FIFO, enqueue et dequeue, BFS, file d'attente
-Liste chaînée|nœuds et pointeurs, insertion O(1), accès O(n)
-Table de hachage|fonction de hachage, collisions, accès O(1) en moyenne
-Arbre binaire de recherche|gauche < nœud < droite, O(log n) si équilibré
-Tas (heap)|arbre presque complet, min ou max à la racine, file de priorité
-Graphe|sommets et arêtes, orienté ou non, liste ou matrice d'adjacence
-Parcours en largeur (BFS)|file, niveau par niveau, plus court chemin non pondéré
-Parcours en profondeur (DFS)|pile ou récursion, détection de cycles, tri topologique
-Algorithme de Dijkstra|plus court chemin, poids positifs, file de priorité
-Diviser pour régner|découper, résoudre, combiner
-Backtracking|exploration, retour arrière, N-reines, sudoku
-Mémoïsation|cache des résultats, évite les recalculs, approche top-down
-Arbre équilibré (AVL, rouge-noir)|rotations, hauteur O(log n)
-Trie (arbre préfixe)|préfixes, autocomplétion, dictionnaire
-Technique des deux pointeurs|deux indices, tableau trié, O(n)
-Fenêtre glissante|sous-tableau contigu, on avance les bornes, O(n)
-Problème NP-complet|vérifiable en temps polynomial, pas d'algo rapide connu, P vs NP`],
-reseau:["Réseaux",`Modèle OSI|7 couches, de physique à application, encapsulation
-TCP vs UDP|fiable et orienté connexion vs rapide et sans connexion
-Handshake TCP|SYN, SYN-ACK, ACK, établissement de connexion
-Adresse IP|IPv4 vs IPv6, identifie une machine, publique ou privée
-Masque de sous-réseau|notation CIDR, /24, partie réseau vs partie hôte
-DNS|nom de domaine vers IP, résolution, enregistrements A et CNAME, cache
-DHCP|attribution automatique d'IP, bail, séquence DORA
-NAT|traduction d'adresses, IP privées derrière une IP publique
-HTTP vs HTTPS|texte clair vs chiffré par TLS, ports 80 et 443
-Méthodes HTTP|GET, POST, PUT, PATCH, DELETE
-Codes de statut HTTP|2xx succès, 3xx redirection, 4xx erreur client, 5xx erreur serveur
-Routeur vs switch|couche 3 vs couche 2, adresses IP vs MAC
-Adresse MAC|identifiant matériel, couche 2, ARP
-Protocole ARP|IP vers MAC, broadcast, ARP spoofing
-Port réseau|identifie un service, 0 à 65535, 22, 80, 443
-Latence vs bande passante|délai vs débit
-VLAN|réseau local virtuel, segmentation, configuré sur le switch
-HTTP/2 et HTTP/3|multiplexage, QUIC, UDP, performances
-Ping et traceroute|ICMP, test de connectivité, sauts entre routeurs
-Proxy|intermédiaire, filtrage, anonymat, cache
-Wi-Fi|norme 802.11, bandes 2,4 et 5 GHz, WPA2 et WPA3
-BGP|routage entre systèmes autonomes, colonne vertébrale d'Internet`],
-os:["Systèmes & OS",`Processus vs thread|mémoire séparée vs partagée, coût de création
-Ordonnancement (scheduling)|round robin, priorités, préemption, temps CPU
-Mémoire virtuelle|espace d'adressage, pagination, swap
-Pagination mémoire|pages, table des pages, défaut de page
-Interblocage (deadlock)|4 conditions de Coffman, prévention, détection
-Mutex et sémaphore|exclusion mutuelle, section critique, compteur
-Race condition|accès concurrent, résultat imprévisible, synchronisation
-Appel système|passage en mode noyau, read, write, fork
-Noyau (kernel)|cœur de l'OS, monolithique vs micro-noyau, pilotes
-Système de fichiers|inodes, ext4 et NTFS, arborescence, journalisation
-Appel fork()|clone le processus, parent et enfant, PID
-Pile vs tas|stack automatique et LIFO vs heap dynamique, fuites
-Garbage collector|libération automatique, mark and sweep, pauses
-Interruptions|signal matériel ou logiciel, gestionnaire, priorité
-Changement de contexte|sauvegarde des registres, coût, multitâche
-Permissions Linux|rwx, user/group/others, chmod
-Shell et pipes|interpréteur, redirections, pipe |, stdin et stdout
-Cache CPU|L1, L2, L3, localité, cache miss
-Concurrence vs parallélisme|entrelacement vs exécution simultanée, multicœur
-Fuite mémoire|mémoire jamais libérée, consommation qui grimpe, outils de détection
-Démon (service)|processus en arrière-plan, systemd`],
-archi:["Archi & Génie logiciel",`Principes SOLID|responsabilité unique, ouvert/fermé, Liskov, ségrégation des interfaces, inversion des dépendances
-MVC|modèle, vue, contrôleur, séparation des responsabilités
-Pattern Singleton|instance unique, accès global, difficile à tester
-Pattern Observer|abonnés, notification, événements
-Pattern Factory|création d'objets déléguée, découplage
-Injection de dépendances|dépendances fournies de l'extérieur, testabilité, IoC
-Architecture hexagonale|ports et adaptateurs, domaine au centre, indépendance technique
-Clean Architecture|couches concentriques, règle de dépendance vers l'intérieur, entités
-Monolithe vs microservices|simplicité vs indépendance, déploiement, équipes
-DRY, KISS, YAGNI|pas de répétition, rester simple, ne pas coder par anticipation
-Couplage et cohésion|faible couplage, forte cohésion
-Architecture orientée événements|producteurs et consommateurs, asynchrone, découplage
-Message broker|Kafka, RabbitMQ, files de messages, découplage
-CQRS|séparer lecture et écriture, modèles distincts
-Domain-Driven Design|domaine métier, langage ubiquitaire, bounded context, agrégats
-API Gateway|point d'entrée unique, routage, authentification, rate limiting
-Programmation orientée objet|encapsulation, héritage, polymorphisme, abstraction
-Programmation fonctionnelle|fonctions pures, immuabilité, fonctions d'ordre supérieur
-Dette technique|raccourcis, coût futur, remboursement par refactoring
-Refactoring|améliorer la structure sans changer le comportement, filet de tests
-TDD|test d'abord, red-green-refactor
-Agile et Scrum|sprints, backlog, rétrospective, itératif
-Versionnage sémantique|MAJEUR.MINEUR.CORRECTIF, compatibilité
-Idempotence|même résultat si on répète, PUT, retry sans risque
-Circuit breaker|coupe les appels vers un service en panne, résilience`]
-};
-
 const DURS=[30,45,60,90,120];
+const ICONS={fullstack:"code",ia:"brain",data:"chart",secu:"shield",devops:"cloud",bdd:"db",algo:"tree",reseau:"network",os:"cpu",archi:"blocks",perso:"pen"};
 const store={
   get(k,d){try{const v=localStorage.getItem("dmt:"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem("dmt:"+k,JSON.stringify(v))}catch(e){}}
@@ -535,7 +480,7 @@ function buildThemes(){
   THEMES={};
   for(const [id,[name,txt]] of Object.entries(RAW)) THEMES[id]={name,items:parse(txt)};
   const custom=parse(store.get("custom",""));
-  if(custom.length) THEMES.perso={name:"Mes concepts",items:custom};
+  if(custom.length) THEMES.perso={name:"Mes fiches",items:custom};
 }
 buildThemes();
 
@@ -543,30 +488,48 @@ const S={
   selected:new Set(store.get("themes",["fullstack"])),
   dur:store.get("dur",60),
   players:store.get("players",[]),
-  scores:{},
-  turn:0,
+  scores:{}, turn:0,
   progress:store.get("progress",{}),
-  deck:[], current:null,
+  deck:[], deckTotal:0, pos:0, current:null, cited:new Set(),
   left:0, running:false, done:false, tick:null, endAt:0,
 };
 S.players.forEach(p=>S.scores[p]=0);
 
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function fmtTime(s){const t=Math.ceil(s);return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}
+const ic=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const pad=n=>String(n).padStart(2,"0");
 const key=(t,w)=>t+"::"+w;
+function fmtTime(s){const t=Math.ceil(s);return Math.floor(t/60)+":"+pad(t%60)}
+function durText(d){return d<60?d+" secondes":d%60===0?(d/60)+" minute"+(d>60?"s":""):Math.floor(d/60)+" min "+(d%60)}
+
+/* ---------- Thème clair / sombre ---------- */
+const MODES=["system","dark","light"], MODE_ICON={system:"auto",dark:"moon",light:"sun"}, MODE_LABEL={system:"Thème : automatique",dark:"Thème : sombre",light:"Thème : clair"};
+let mode=store.get("mode","system");
+function applyMode(){
+  const r=document.documentElement;
+  mode==="system"?r.removeAttribute("data-theme"):r.setAttribute("data-theme",mode);
+  $("themeIcon").setAttribute("href","#i-"+MODE_ICON[mode]);
+  $("themeBtn").setAttribute("aria-label",MODE_LABEL[mode]+". Toucher pour changer");
+  $("themeBtn").title=MODE_LABEL[mode];
+  const dark=mode==="dark"||(mode==="system"&&!matchMedia("(prefers-color-scheme: light)").matches);
+  document.querySelector('meta[name="theme-color"]').content=dark?"#0B0F18":"#F4F6FA";
+}
+$("themeBtn").addEventListener("click",()=>{mode=MODES[(MODES.indexOf(mode)+1)%3];store.set("mode",mode);applyMode()});
+matchMedia("(prefers-color-scheme: light)").addEventListener?.("change",applyMode);
 
 /* ---------- Accueil ---------- */
 function renderThemes(){
   for(const id of [...S.selected]) if(!THEMES[id]) S.selected.delete(id);
-  $("themes").innerHTML=Object.entries(THEMES).map(([id,t])=>
-    `<button class="theme" type="button" data-id="${id}" aria-pressed="${S.selected.has(id)}"><b>${esc(t.name)}</b><small>${t.items.length} concepts</small></button>`).join("");
-  const all=Object.keys(THEMES).every(id=>S.selected.has(id));
-  $("allThemes").textContent=all?"Tout désélectionner":"Tout sélectionner";
+  const ids=Object.keys(THEMES);
+  $("themes").innerHTML=ids.map(id=>{const t=THEMES[id];
+    return `<button class="tag" type="button" data-id="${id}" aria-pressed="${S.selected.has(id)}">${ic(ICONS[id]||"pen")}<span>${esc(t.name)}</span><small>(${t.items.length})</small></button>`}).join("");
+  $("selCount").textContent=`${S.selected.size}/${ids.length}`;
+  $("allThemes").textContent=ids.every(id=>S.selected.has(id))?"Tout désélectionner":"Tout sélectionner";
   updateDraw();
 }
 $("themes").addEventListener("click",e=>{
-  const b=e.target.closest(".theme"); if(!b) return;
+  const b=e.target.closest(".tag"); if(!b) return;
   const id=b.dataset.id;
   S.selected.has(id)?S.selected.delete(id):S.selected.add(id);
   store.set("themes",[...S.selected]); S.deck=[]; renderThemes();
@@ -579,8 +542,7 @@ $("allThemes").addEventListener("click",()=>{
 
 function renderDurs(){
   $("durations").innerHTML=DURS.map(d=>`<button type="button" data-d="${d}" aria-pressed="${d===S.dur}">${d<60?d+"s":fmtTime(d)}</button>`).join("");
-  const d=S.dur;
-  $("durLabel").textContent=d<60?d+" secondes":d%60===0?(d/60)+" minute"+(d>60?"s":""):Math.floor(d/60)+" min "+(d%60);
+  $("durLabel").textContent=durText(S.dur);
 }
 $("durations").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
@@ -588,10 +550,11 @@ $("durations").addEventListener("click",e=>{
 });
 
 function renderPlayers(){
-  $("players").innerHTML=S.players.map((p,i)=>`<span class="chip">${esc(p)}<button type="button" data-i="${i}" aria-label="Retirer ${esc(p)}">×</button></span>`).join("");
-  $("playersHint").textContent=S.players.length
-    ? `${S.players.length} joueur${S.players.length>1?"s":""}. Chacun son tour, les autres jugent la réponse.`
-    : "Seul, tu révises. À plusieurs, vous vous passez le téléphone et les autres notent la réponse.";
+  if(S.turn>=S.players.length) S.turn=0;
+  $("players").innerHTML=S.players.map((p,i)=>
+    `<span class="pchip${i===S.turn?" now":""}">${esc(p)}${i===S.turn?"<em>AU MICRO</em>":""}<button type="button" data-i="${i}" aria-label="Retirer ${esc(p)}">${ic("x")}</button></span>`).join("");
+  $("playerCount").textContent=S.players.length?`${S.players.length} inscrit${S.players.length>1?"s":""}`:"";
+  $("playersHint").hidden=S.players.length>0;
 }
 $("playerForm").addEventListener("submit",e=>{
   e.preventDefault();
@@ -601,33 +564,36 @@ $("playerForm").addEventListener("submit",e=>{
 });
 $("players").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
-  const [p]=S.players.splice(+b.dataset.i,1); delete S.scores[p];
+  const i=+b.dataset.i, [p]=S.players.splice(i,1); delete S.scores[p];
+  if(i<S.turn) S.turn--;
   store.set("players",S.players); renderPlayers();
 });
 
-function reviewPool(){
-  return Object.entries(S.progress).filter(([,r])=>r==="bad").map(([k])=>k);
-}
+function reviewPool(){return Object.entries(S.progress).filter(([k,r])=>r==="bad"&&THEMES[k.split("::")[0]]).map(([k])=>k)}
 function renderStats(){
-  const v=Object.values(S.progress);
-  $("sGood").textContent=v.filter(r=>r==="good").length;
-  $("sMid").textContent=v.filter(r=>r==="mid").length;
-  $("sBad").textContent=v.filter(r=>r==="bad").length;
+  let total=0; for(const t of Object.values(THEMES)) total+=t.items.length;
+  const v=Object.entries(S.progress).filter(([k])=>THEMES[k.split("::")[0]]).map(([,r])=>r);
+  const g=v.filter(r=>r==="good").length, m=v.filter(r=>r==="mid").length, b=v.filter(r=>r==="bad").length;
+  $("sGood").textContent=g; $("sMid").textContent=m; $("sBad").textContent=b;
+  $("ratedCount").textContent=`${g+m+b}/${total} notées`;
+  const [bg,bm,bb,br]=$("bar").children;
+  bg.style.flexGrow=g; bm.style.flexGrow=m; bb.style.flexGrow=b; br.style.flexGrow=Math.max(0,total-g-m-b);
   const pool=reviewPool();
+  $("reviewTitle").textContent=`Mes concepts à revoir (${pool.length})`;
   $("reviewList").innerHTML=pool.length
-    ? pool.map(k=>{const [t,w]=k.split("::");return `<li>${esc(w)}<span>${esc(THEMES[t]?.name||t)}</span></li>`}).join("")
-    : `<li style="border:0;color:var(--muted)">Rien à revoir pour l'instant. Note « À revoir » un concept pour le retrouver ici.</li>`;
-  const wrap=$("reviewToggleWrap");
+    ? pool.map(k=>{const [t,w]=k.split("::");return `<span class="rchip">${ic(ICONS[t]||"pen")}${esc(w)}</span>`}).join("")
+    : `<p class="hint">Rien pour l'instant. Note « À revoir » un concept pour le retrouver ici.</p>`;
   $("reviewOnly").disabled=!pool.length;
   if(!pool.length) $("reviewOnly").checked=false;
-  wrap.classList.toggle("disabled",!pool.length);
-  $("reviewToggleText").textContent=`Seulement mes concepts « à revoir »${pool.length?" ("+pool.length+")":""}`;
+  $("focusCard").classList.toggle("off",!pool.length);
+  $("focusText").textContent=pool.length?`Restreint le tirage aux ${pool.length} concept${pool.length>1?"s":""} à revoir`:"Note des concepts « à revoir » pour l'activer";
+  $("customTitle").textContent=`Mes fiches perso (${THEMES.perso?.items.length||0})`;
   updateDraw();
 }
 function updateDraw(){
   const ok=$("reviewOnly").checked?reviewPool().length>0:S.selected.size>0;
   $("drawBtn").disabled=!ok;
-  $("drawBtn").textContent=ok?"Tirer un concept →":"Choisis au moins un thème";
+  $("drawText").textContent=ok?"Tirer un concept":"Choisis au moins un thème";
 }
 $("reviewOnly").addEventListener("change",()=>{S.deck=[];updateDraw()});
 
@@ -643,7 +609,7 @@ $("saveCustom").addEventListener("click",()=>{
   buildThemes();
   if(THEMES.perso) S.selected.add("perso");
   store.set("themes",[...S.selected]); S.deck=[];
-  renderThemes();
+  renderThemes(); renderStats();
   $("customSaved").hidden=false; setTimeout(()=>$("customSaved").hidden=true,2000);
 });
 
@@ -659,48 +625,67 @@ function buildDeck(){
   } else {
     for(const t of S.selected) for(const it of THEMES[t].items) cards.push({t,...it});
   }
-  S.deck=shuffle(cards);
+  S.deck=shuffle(cards); S.deckTotal=cards.length;
 }
 function draw(){
   if(!S.deck.length) buildDeck();
   if(!S.deck.length) return false;
   S.current=S.deck.pop();
+  S.pos=S.deckTotal-S.deck.length;
   return true;
 }
 
 /* ---------- Jeu ---------- */
-const C=2*Math.PI*52;
+const C=2*Math.PI*54;
 $("prog").style.strokeDasharray=C;
+const player=()=>S.players.length?S.players[S.turn]:null;
 
 function showCard(){
-  const c=S.current;
-  $("cTheme").textContent=THEMES[c.t].name;
+  const c=S.current, name=THEMES[c.t].name;
+  $("cTheme").textContent=`[${name}]`;
+  $("cardNo").textContent=`#${pad(S.pos)}`;
+  $("mDeck").textContent=`Carte ${pad(S.pos)} / ${pad(S.deckTotal)}`;
+  $("mDur").textContent=durText(S.dur);
   const w=$("cWord"); w.textContent=c.w; w.classList.remove("pop"); void w.offsetWidth; w.classList.add("pop");
-  S.left=S.dur; S.running=false; S.done=false;
-  $("reveal").hidden=true;
-  $("ring").hidden=false;
-  paintTimer(); renderControls(); renderTurn();
+  S.left=S.dur; S.running=false; S.done=false; S.cited=new Set();
+  $("stage").hidden=false; $("doneCard").hidden=true; $("meta").hidden=false; $("reveal").hidden=true;
+  paint();
 }
-function paintTimer(){
-  const f=Math.max(0,S.left/S.dur);
+function paint(){
+  const f=Math.max(0,S.left/S.dur), ring=$("ring"), p=player();
   $("prog").style.strokeDashoffset=C*(1-f);
   $("tNum").textContent=fmtTime(S.left);
-  const r=$("ring");
-  r.classList.toggle("warn",f<=.34&&f>.12);
-  r.classList.toggle("danger",f<=.12);
-  r.classList.toggle("pulse",S.running&&S.left<=5);
-  $("tState").textContent=S.done?"terminé":S.running?"parle !":S.left<S.dur?"en pause":"prêt ?";
+  const danger=S.left<=Math.min(10,S.dur*.2), paused=!S.running&&!S.done&&S.left<S.dur;
+  ring.classList.toggle("warn",f<=.34&&!danger);
+  ring.classList.toggle("danger",danger);
+  ring.classList.toggle("running",S.running);
+  ring.classList.toggle("paused",paused);
+  ring.classList.toggle("pulse",S.running&&S.left<=5);
+  $("alert").hidden=!(S.running&&danger);
+  $("tState").innerHTML=S.running?"Parle !":paused?"En pause":"Prêt ?";
+  $("kicker").textContent=S.running?"En direct":"Concept à expliquer";
+  $("tipText").textContent=S.running?(danger?"Termine ta phrase, c'est presque fini !":"Explique sans t'arrêter. Définition, exemple, pièges.")
+    :paused?"Pause. Reprends quand tu es prêt.":"Respire un grand coup et prépare tes arguments.";
+  // statut en haut
+  const st=$("status");
+  if(S.done){st.className="status over";st.textContent=S.left<=0?"Temps écoulé !":"Terminé"}
+  else if(S.running){st.className="status live";st.innerHTML=p?`${esc(p)} parle`:"En direct"}
+  else{st.className="status";st.innerHTML=p?`Au tour de <b>${esc(p)}</b>`:"Session solo"}
+  // conseil de passage du téléphone
+  $("pass").hidden=!(p&&!S.running&&!S.done&&S.left===S.dur);
+  if(p) $("passText").textContent=`Passe le téléphone à ${p}.`;
+  renderControls(); renderBoard();
 }
 function renderControls(){
   const el=$("controls");
-  if(S.done){el.innerHTML="";el.hidden=true;return}
+  if(S.done){el.hidden=true;return}
   el.hidden=false;
-  if(S.running) el.innerHTML=`<button class="ghost" id="bPause" type="button">Pause</button><button class="ghost" id="bFinish" type="button">J'ai fini</button>`;
-  else if(S.left<S.dur) el.innerHTML=`<button class="cta" id="bStart" type="button">Reprendre</button><button class="ghost" id="bFinish" type="button">J'ai fini</button><button class="ghost" id="bSkip" type="button">Autre concept</button>`;
-  else el.innerHTML=`<button class="cta" id="bStart" type="button">Lancer le chrono</button><button class="ghost" id="bSkip" type="button" style="grid-column:1 / -1">Autre concept</button>`;
+  if(S.running) el.innerHTML=`<button class="ghost" id="bPause" type="button">${ic("pause")}Pause</button><button class="cta" id="bFinish" type="button">J'ai fini ${ic("checkc")}</button>`;
+  else if(S.left<S.dur) el.innerHTML=`<button class="cta full" id="bStart" type="button">${ic("play")}Reprendre</button><button class="ghost" id="bFinish" type="button">${ic("checkc")}J'ai fini</button><button class="ghost" id="bSkip" type="button">${ic("refresh")}Autre</button>`;
+  else el.innerHTML=`<button class="cta full" id="bStart" type="button">Lancer le chrono ${ic("zap")}</button><button class="ghost full" id="bSkip" type="button">Autre concept ${ic("refresh")}</button>`;
 }
 $("controls").addEventListener("click",e=>{
-  const id=e.target.id;
+  const id=e.target.closest("button")?.id;
   if(id==="bStart") start();
   else if(id==="bPause") pause();
   else if(id==="bFinish") finish(false);
@@ -733,27 +718,52 @@ function start(){
   S.running=true; S.endAt=performance.now()+S.left*1000;
   keepAwake(true);
   clearInterval(S.tick);
+  let last=-1;
   S.tick=setInterval(()=>{
     S.left=Math.max(0,(S.endAt-performance.now())/1000);
-    paintTimer();
-    if(S.left<=0) finish(true);
+    if(S.left<=0) return finish(true);
+    const sec=Math.ceil(S.left);
+    if(sec!==last){last=sec;paint()} else {$("prog").style.strokeDashoffset=C*(1-S.left/S.dur)}
   },100);
-  renderControls(); paintTimer();
+  paint();
 }
-function pause(){
-  clearInterval(S.tick); S.running=false; keepAwake(false);
-  renderControls(); paintTimer();
-}
+function pause(){clearInterval(S.tick);S.running=false;keepAwake(false);paint()}
 function finish(timeUp){
   clearInterval(S.tick); S.running=false; S.done=true; keepAwake(false);
   if(timeUp){S.left=0;beep()}
-  paintTimer(); renderControls();
-  const k=S.current.k;
-  $("keys").innerHTML=k.length?k.map(x=>`<li>${esc(x)}</li>`).join(""):`<li>Pas de points clés pour ce concept perso.</li>`;
-  $("rateLabel").textContent=S.players.length?`Les autres jugent ${S.players[S.turn]} :`:"Comment ça s'est passé ?";
-  $("reveal").hidden=false;
-  $("reveal").scrollIntoView({behavior:"smooth",block:"nearest"});
+  const c=S.current;
+  $("dTheme").textContent=`[${THEMES[c.t].name}]`;
+  $("dWord").textContent=c.w;
+  $("dTime").textContent=fmtTime(S.left);
+  $("stage").hidden=true; $("meta").hidden=true; $("pass").hidden=true;
+  $("doneCard").hidden=false; $("reveal").hidden=false;
+  const p=player();
+  $("rateLabel").textContent=p?`Les autres jugent ${p} :`:"Ton verdict";
+  document.querySelectorAll(".rate .pt").forEach(el=>el.hidden=!p);
+  renderKeys(); paint();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
+function renderKeys(){
+  const k=S.current.k;
+  $("keys").innerHTML=k.length
+    ? k.map((x,i)=>{const on=S.cited.has(i);return `<button class="key" type="button" data-i="${i}" aria-pressed="${on}">${ic(on?"checkc":"circle")}<span>${esc(x)}</span></button>`}).join("")
+    : `<p class="hint">Pas de points clés pour cette fiche perso.</p>`;
+  $("cited").textContent=`${S.cited.size}/${k.length} CITÉ${S.cited.size>1?"S":""}`;
+  $("cited").hidden=!k.length;
+  // suggestion de note selon la part de points cités
+  const btns=document.querySelectorAll(".rate button");
+  btns.forEach(b=>b.classList.remove("suggest"));
+  if(k.length&&S.cited.size){
+    const r=S.cited.size/k.length, s=r>=.75?"good":r>=.4?"mid":"bad";
+    document.querySelector(`.rate [data-rate="${s}"]`).classList.add("suggest");
+    $("rateHint").textContent="suggestion encadrée";
+  } else $("rateHint").textContent="1 choix";
+}
+$("keys").addEventListener("click",e=>{
+  const b=e.target.closest(".key"); if(!b) return;
+  const i=+b.dataset.i; S.cited.has(i)?S.cited.delete(i):S.cited.add(i);
+  renderKeys();
+});
 document.querySelector(".rate").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
   const r=b.dataset.rate;
@@ -764,29 +774,36 @@ document.querySelector(".rate").addEventListener("click",e=>{
     S.turn=(S.turn+1)%S.players.length;
   }
   if($("reviewOnly").checked&&r!=="bad") S.deck=S.deck.filter(c=>key(c.t,c.w)!==key(S.current.t,S.current.w));
-  if(draw()) {showCard(); window.scrollTo({top:0,behavior:"smooth"})}
+  if(draw()){showCard();window.scrollTo({top:0,behavior:"smooth"})}
   else goHome();
 });
 
-function renderTurn(){
-  const t=$("turn"), b=$("board");
-  if(!S.players.length){t.hidden=true;b.hidden=true;return}
-  t.hidden=false; t.textContent="Au tour de "+S.players[S.turn];
+function renderBoard(){
+  const b=$("board");
+  if(!S.players.length){b.hidden=true;return}
   b.hidden=false;
+  const cur=S.players[S.turn], next=S.players[(S.turn+1)%S.players.length];
   const order=[...S.players].sort((a,c)=>(S.scores[c]||0)-(S.scores[a]||0));
-  $("boardList").innerHTML=order.map(p=>`<li class="${p===S.players[S.turn]?"now":""}">${esc(p)}<b>${S.scores[p]||0}</b></li>`).join("");
+  const top=S.scores[order[0]]||0;
+  $("boardList").innerHTML=order.map((p,i)=>{
+    const lead=i===0&&top>0, now=p===cur;
+    const sub=now?(S.done?"En attente du verdict":"Au micro"):lead?"En tête":p===next&&S.players.length>1?"Prochain tour":"";
+    return `<li class="${now?"now":""}${lead?" lead":""}"><span class="rank">${i+1}</span><span class="av">${esc(p[0].toUpperCase())}</span>
+      <span class="who"><b>${esc(p)}${now?"<em>TOUR ACTUEL</em>":""}</b>${sub?`<small>${sub}</small>`:""}</span>
+      <span class="pts">${S.scores[p]||0}<small>pts</small></span></li>`}).join("");
 }
 
+function setScreen(play){
+  $("home").hidden=play; $("play").hidden=!play;
+  $("logo").hidden=play; $("backBtn").hidden=!play; $("status").hidden=!play;
+}
 function goPlay(){
   if(!draw()) return;
-  if(S.turn>=S.players.length) S.turn=0;
-  $("home").hidden=true; $("play").hidden=false;
-  showCard(); window.scrollTo(0,0);
+  setScreen(true); showCard(); window.scrollTo(0,0);
 }
 function goHome(){
   clearInterval(S.tick); S.running=false; keepAwake(false);
-  $("play").hidden=true; $("home").hidden=false;
-  renderStats(); window.scrollTo(0,0);
+  setScreen(false); renderPlayers(); renderStats(); window.scrollTo(0,0);
 }
 $("drawBtn").addEventListener("click",goPlay);
 $("backBtn").addEventListener("click",goHome);
@@ -797,10 +814,9 @@ document.addEventListener("keydown",e=>{
 });
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.running) keepAwake(true)});
 
-renderThemes(); renderDurs(); renderPlayers(); renderStats();
+applyMode(); renderThemes(); renderDurs(); renderPlayers(); renderStats();
 
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
-
 </body>
 </html>

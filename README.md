@@ -21,6 +21,10 @@ puis ouvrir http://localhost:8000.
 
 ## Ajouter des concepts
 
-Les concepts sont dans l'objet `RAW` de `index.html`, une ligne par concept : `Nom du concept|point clé, point clé, ...`.
+Les concepts sont dans `concepts.js`, une ligne par concept : `Nom du concept|point clé, point clé, ...`.
+
+## Design
+
+Maquette générée avec Google Stitch (thème sombre « terminal × jeu télévisé »), polices Space Grotesk, Inter et JetBrains Mono hébergées dans `fonts/` (via Fontsource, licence SIL OFL).
 
 Après une modification, change `CACHE` dans `sw.js` (`dis-moi-tout-v2`, etc.) pour que les téléphones récupèrent la nouvelle version.

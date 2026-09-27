@@ -1,6 +1,11 @@
 // Change la version à chaque mise à jour du site pour forcer le rechargement du cache.
-const CACHE = "dis-moi-tout-v1";
-const FILES = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png"];
+const CACHE = "dis-moi-tout-v2";
+const FONTS = [
+  "space-grotesk-latin-500-normal", "space-grotesk-latin-700-normal",
+  "inter-latin-400-normal", "inter-latin-500-normal", "inter-latin-600-normal",
+  "jetbrains-mono-latin-500-normal", "jetbrains-mono-latin-700-normal",
+].map(f => `fonts/${f}.woff2`);
+const FILES = ["./", "index.html", "concepts.js", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png", ...FONTS];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
